@@ -19,13 +19,13 @@ class CirconusClient(object):
                               doc="Specify an alternate configuration file",
                               takesparam=True, default=None)
         # Add commands here
-        self.cmdparser.add("foo", self.foo)
+        self.cmdparser.add("list_accounts", self.list_accounts)
 
         self.options = self.cmdparser.parse_options()
         self.init_logger(self.options['debug'])
         self.config = self.load_config(self.options['conffile'])
         self.debug = self.config.getboolean('general', 'debug')
-        api = circonusapi.CirconusAPI(self.config.get('general', 'token'))
+        self.api = circonusapi.CirconusAPI(self.config.get('general', 'token'))
 
     def init_logger(self, debug):
         if debug:
@@ -63,9 +63,11 @@ class CirconusClient(object):
         if status:
             sys.exit(status)
 
-    def foo(self, foo):
-        """Test command"""
-        pass
+    def list_accounts(self, opts):
+        """List the accounts you have access to"""
+        rv = self.api.list_accounts()
+        for account in sorted(rv):
+            print account
 
 if __name__ == '__main__':
     cc = CirconusClient()
