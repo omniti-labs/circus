@@ -8,6 +8,7 @@ class CmdParse(object):
         self.scriptname = sys.argv[0]
         self.add('help', self.help)
         self.options = {}
+        self.args = None
 
     def parse_options(self):
         options = {}
@@ -49,9 +50,16 @@ class CmdParse(object):
             else:
                 options[var] = True
 
+        self.args = args
+
         return options
 
-    def parse(self, args=sys.argv[1:]):
+    def parse(self, args=None):
+        if not args:
+            args = self.args
+        if not args:
+            args = sys.argv[1:]
+
         try:
             cmd = args[0]
             callback = self.cmd_map[cmd]['callback']
