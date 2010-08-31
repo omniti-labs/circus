@@ -103,11 +103,11 @@ class CirconusAPI(object):
         try:
             fh = urllib2.urlopen(req, urllib.urlencode(plist))
         except urllib2.HTTPError, e:
-            if e.code == '401':
+            if e.code == 401:
                 raise TokenNotValidated
-            if e.code == '403':
+            if e.code == 403:
                 raise AccessDenied
-
+            raise
         response = json.load(fh)
         fh.close()
         return response
