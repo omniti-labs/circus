@@ -19,7 +19,7 @@ class CirconusClient(object):
                               doc="Specify an alternate configuration file",
                               takesparam=True, default=None)
         # Add commands here
-        self.cmdparser.add("list_accounts", self.list_accounts)
+        self.cmdparser.add("list_accounts", self.list_accounts, opts="l")
 
         self.options = self.cmdparser.parse_options()
         self.init_logger(self.options['debug'])
@@ -35,7 +35,6 @@ class CirconusClient(object):
         logging.basicConfig(level=level,
             format='%(asctime)s %(levelname)s %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S')
-        logging.info("progname starting...")
         logging.debug("Debugging mode on")
 
     def load_config(self, configfile):
@@ -54,7 +53,8 @@ class CirconusClient(object):
         if configfile:
             loaded = config.read([configfile])
         else:
-            loaded = config.read(['/etc/circusrc', '~/.circusrc'])
+            loaded = config.read(['/etc/circusrc',
+                                  os.path.expanduser('~/.circusrc')])
         logging.debug("Loaded config files: %s" % ', '.join(loaded))
         return config
 
@@ -64,10 +64,26 @@ class CirconusClient(object):
             sys.exit(status)
 
     def list_accounts(self, opts):
-        """List the accounts you have access to"""
+        """List the accounts you have access to
+
+        Options:
+            -l - Long listing (show metric count)
+        """
         rv = self.api.list_accounts()
+        print "Account List"
         for account in sorted(rv):
-            print account
+            desc = ""
+            if account['account_description']:
+                desc = " (%s)" % account['account_description']
+            print "    %s%s" % (account['account_name'], desc)
+            if ('-l', '') in opts:
+                print "        Circonus metrics:   %s/%s" % (
+                    account['circonus_metrics_used'],
+                    account['circonus_metric_limit'])
+                if 'enterprise_metric_limit' in account:
+                    print "        Enterprise metrics: %s/%s" % (
+                        account['enterprise_metrics_used'],
+                        account['enterprise_metric_limit'])
 
 if __name__ == '__main__':
     cc = CirconusClient()
