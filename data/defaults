@@ -1,3 +1,5 @@
 [general]
 debug=False
-token=
+default_account=
+
+[tokens]

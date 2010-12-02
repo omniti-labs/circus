@@ -18,6 +18,10 @@ class CirconusClient(object):
         self.cmdparser.addopt(shortopt="c", longopt="conf", var="conffile",
                               doc="Specify an alternate configuration file",
                               takesparam=True, default=None)
+        self.cmdparser.addopt(shortopt="a", longopt="account",
+                              var="account",
+                              doc="Specify which circonus account to use",
+                              takesparam=True, default=None)
         # Add commands here
         self.cmdparser.add("list_accounts", self.list_accounts, opts="l")
 
@@ -25,7 +29,7 @@ class CirconusClient(object):
         self.init_logger(self.options['debug'])
         self.config = self.load_config(self.options['conffile'])
         self.debug = self.config.getboolean('general', 'debug')
-        self.api = circonusapi.CirconusAPI(self.config.get('general', 'token'))
+        self.api = circonusapi.CirconusAPI(self.get_api_token())
 
     def init_logger(self, debug):
         if debug:
@@ -58,13 +62,44 @@ class CirconusClient(object):
         logging.debug("Loaded config files: %s" % ', '.join(loaded))
         return config
 
+    def get_api_token(self):
+        account = self.get_current_account()
+        try:
+            token = self.config.get('tokens', account)
+        except ConfigParser.NoOptionError:
+            logging.error("No token found for account %s. Please set one"
+                            " up in the config file" % account)
+            sys.exit(1)
+        return token
+
+    def get_current_account(self):
+        account = self.options['account']
+        if not account:
+            account = self.config.get('general', 'default_account')
+            if not account:
+                logging.error("No default account has been set up"
+                              " and one wasn't specified on the command line")
+                sys.exit(1)
+        return account
+
     def start(self):
-        status = self.cmdparser.parse()
+        try:
+            status = self.cmdparser.parse()
+        except circonusapi.AccessDenied:
+            logging.error(
+                "Access denied. Perhaps you need to generate a new token")
+            status = 1
+        except circonusapi.TokenNotValidated:
+            logging.error("API token requires validation")
+            status = 1
+
         if status:
             sys.exit(status)
 
     def list_accounts(self, opts):
-        """List the accounts you have access to
+        """List the accounts you have access to.
+
+        Please note that each account needs a separate API token.
 
         Options:
             -l - Long listing (show metric count)
