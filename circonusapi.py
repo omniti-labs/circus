@@ -11,11 +11,10 @@ class CirconusAPI(object):
         # The two lists are required and optional parameters
         self.methods = {
             ### Check management
-            'list_agents':          [['account']],
-            'list_checks':          [['account'], ['active']],
-            'list_metrics':         [['account', 'check_id']],
-            'add_check_bundle':     [['account', 'agent_id', 'target',
-                                      'metric_name'],
+            'list_agents':          [[]],
+            'list_checks':          [[], ['active']],
+            'list_metrics':         [['check_id']],
+            'add_check_bundle':     [['agent_id', 'target', 'metric_name'],
                                       ['module', 'period', 'timeout','*']],
             'edit_check_bundle':    [['bundle_id', 'metric_name', 'period',
                                       'timeout'], ['*']],
@@ -26,7 +25,7 @@ class CirconusAPI(object):
             ### Account Management
             'list_accounts':        [[]],
             'list_users':           [['check_id', 'metric_name']],
-            'list_contact_groups':  [['account']],
+            'list_contact_groups':  [[]],
             'add_contact_group':    [['name'], ['agg_window']],
             'edit_contact_group':   [['contact_group_id'],
                                     ['name', 'agg_window']],
@@ -36,12 +35,11 @@ class CirconusAPI(object):
             'remove_contact':       [['contact_group_id'],
                                      ['user_id', 'id', 'contact_method']],
             ### Rule Management
-            'list_alerts':          [['account', 'start', 'end']],
-            'list_rules':           [['account', 'check_id', 'metric_name']],
-            'add_metric_rule':      [['account', 'check_id', 'metric_name',
-                                      'order', 'severity', 'value']],
-            'remove_metric_rule':   [['account', 'check_id', 'metric_name',
-                                      'order']],
+            'list_alerts':          [['start', 'end']],
+            'list_rules':           [['check_id', 'metric_name']],
+            'add_metric_rule':      [['check_id', 'metric_name', 'order',
+                                      'severity', 'value']],
+            'remove_metric_rule':   [['check_id', 'metric_name', 'order']],
             'add_metric_parent':    [['check_id', 'parent_check_id',
                                       'metric_name', 'parent_metric_name']],
             'remove_metric_parent': [['check_id', 'metric_name']],
