@@ -24,6 +24,7 @@ class CirconusClient(object):
                               takesparam=True, default=None)
         # Add commands here
         self.cmdparser.add("list_accounts", self.list_accounts, opts="l")
+        self.cmdparser.add("list_checks", self.list_checks, opts="la")
 
         self.options = self.cmdparser.parse_options()
         self.init_logger(self.options['debug'])
@@ -119,6 +120,26 @@ class CirconusClient(object):
                     print "        Enterprise metrics: %s/%s" % (
                         account['enterprise_metrics_used'],
                         account['enterprise_metric_limit'])
+
+    def list_checks(self, opts):
+        """List the checks for an account
+
+        Options:
+            -l - Long listing
+            -a - Include inactive and deleted checks also
+        """
+        active = 'true'
+        if ('-a', '') in opts:
+            active = ''
+        rv = self.api.list_checks(active=active)
+        print "Check List for %s" % self.get_current_account()
+        for check in sorted(rv):
+            check_active = ''
+            if check['active'] == 'false':
+                check_active = ' (inactive)'
+            if check['active'] == 'deleted':
+                check_active = ' (deleted)'
+            print "    %s%s" % (check['name'], check_active)
 
 if __name__ == '__main__':
     cc = CirconusClient()
