@@ -1,5 +1,12 @@
+import collections
+
 __cmdname__ = 'compare_hosts'
 __cmdopts__ = ''
+
+
+class recursivedefaultdict(collections.defaultdict):
+    def __init__(self):
+        self.default_factory = type(self)
 
 class Module(object):
     def __init__(self, api, account):
@@ -27,22 +34,31 @@ class Module(object):
                 # TODO - agents
                 rv = self.api.list_metrics(check_id=check)
                 for m in rv:
-                    metrics[i][m['name']] = m
+                    metrics[i]["%s`%s" % (m['check_id'], m['name'])] = m
 
-        s = []
+        s = [] # Sets to compare
+        # Mapping from metric name/type/agent to check name
+        check_names = recursivedefaultdict()
         for i in range(0, len(ips)):
-            s.append(set([j for j in metrics[i] if metrics[i][j]['enabled']]))
+            tmp = []
+            for metric_id, m in metrics[i].items():
+                if m['enabled']:
+                    c = checks[i][m['check_id']]
+                    # The set will compare all of the criteria below
+                    tmp.append((m['name'], c['type'], c['agent']))
+                    check_names[c['agent']][c['type']][m['name']] = c['name']
+            s.append(set(tmp))
 
         missing = [ s[0] - s[1], s[1] - s[0]]
 
         if missing[0]:
             print "Metrics present on %s but not on %s:" % (host1, host2)
             for i in missing[0]:
-                print "    %s (%s)" % (
-                    i, checks[0][metrics[0][i]['check_id']]['name'])
+                print "    %s (%s/%s/%s)" % (
+                    i[0], i[1], i[2], check_names[i[2]][i[1]][i[0]])
 
         if missing[1]:
             print "Metrics present on %s but not on %s:" % (host2, host1)
             for i in missing[1]:
-                print "    %s (%s)" % (
-                    i, checks[1][metrics[1][i]['check_id']]['name'])
+                print "    %s (%s/%s/%s)" % (
+                    i[0], i[1], i[2], check_names[i[2]][i[1]][i[0]])
