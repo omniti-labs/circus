@@ -22,15 +22,41 @@ class CirconusClient(object):
                               var="account",
                               doc="Specify which circonus account to use",
                               takesparam=True, default=None)
-        # Add commands here
-        self.cmdparser.add("list_accounts", self.list_accounts, opts="l")
-        self.cmdparser.add("list_checks", self.list_checks, opts="la")
+
 
         self.options = self.cmdparser.parse_options()
         self.init_logger(self.options['debug'])
         self.config = self.load_config(self.options['conffile'])
         self.debug = self.config.getboolean('general', 'debug')
         self.api = circonusapi.CirconusAPI(self.get_api_token())
+        self.account = self.get_current_account()
+        self.load_modules()
+
+    def load_modules(self):
+        tmp = [os.path.splitext(i) for i in os.listdir(
+            os.path.join(os.path.dirname(__file__), "module")) ]
+        module_list = [i[0] for i in tmp
+                       if i[1] == '.py' and i[0] != '__init__']
+
+        modules = []
+        for modname in module_list:
+            try:
+                module = __import__('module.%s' % modname, globals(),
+                                    locals(), [modname])
+            except ImportError, e:
+                logging.error("Unable to load module %s: %s" % (modname, e))
+                continue
+            module_object = module.Module(self.api, self.account)
+            modules.append(module_object)
+            # Register commands
+            # use __cmdname__ for the command name, falling back to the name
+            # of the module if it's not present
+            cmdname = getattr(module, '__cmdname__', modname)
+            cmdopts = getattr(module, '__cmdopts__', '')
+            longopts = getattr(module, '__longopts__', [])
+            self.cmdparser.add(cmdname, module_object.command,
+                               opts=cmdopts, longopts=longopts)
+        return modules
 
     def init_logger(self, debug):
         if debug:
@@ -97,51 +123,6 @@ class CirconusClient(object):
         if status:
             sys.exit(status)
 
-    def list_accounts(self, opts):
-        """List the accounts you have access to.
-
-        Please note that each account needs a separate API token.
-
-        Options:
-            -l - Long listing (show metric count)
-        """
-        rv = self.api.list_accounts()
-        print "Account List"
-        for account in sorted(rv):
-            desc = ""
-            if account['account_description']:
-                desc = " (%s)" % account['account_description']
-            print "    %s%s" % (account['account_name'], desc)
-            if ('-l', '') in opts:
-                print "        Circonus metrics:   %s/%s" % (
-                    account['circonus_metrics_used'],
-                    account['circonus_metric_limit'])
-                if 'enterprise_metric_limit' in account:
-                    print "        Enterprise metrics: %s/%s" % (
-                        account['enterprise_metrics_used'],
-                        account['enterprise_metric_limit'])
-
-    def list_checks(self, opts):
-        """List the checks for an account
-
-        Options:
-            -l - Long listing
-            -a - Include inactive and deleted checks also
-        """
-        active = 'true'
-        if ('-a', '') in opts:
-            active = ''
-        rv = self.api.list_checks(active=active)
-        print "Check List for %s" % self.get_current_account()
-        for check in sorted(rv):
-            check_active = ''
-            if check['active'] == 'false':
-                check_active = ' (inactive)'
-            if check['active'] == 'deleted':
-                check_active = ' (deleted)'
-            print "    %s%s" % (check['name'], check_active)
-
 if __name__ == '__main__':
     cc = CirconusClient()
     cc.start()
-
