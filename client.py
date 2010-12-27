@@ -6,6 +6,10 @@ import logging
 import os
 import sys
 
+# Add the lib dir to the current python path - allows modules to use utility
+# libraries
+sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
+
 import circonusapi
 import cmdparse
 

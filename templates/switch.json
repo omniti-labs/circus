@@ -1,0 +1,30 @@
+{
+    "title": "Switch %(switch_name)s port %(port)s",
+    "style": "area",
+    "datapoints": [
+        {
+            "data_formula": "8,*",
+            "name": "Out octets",
+            "check_id": "%(check_id)d",
+            "legend_formula": "auto,2,round",
+            "color": "#4a00dc",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "out_octets",
+            "hidden": false,
+            "axis": "l"
+        },
+        {
+            "data_formula": "-8,*,auto",
+            "name": "In Octets",
+            "check_id": "%(check_id)d",
+            "legend_formula": "1,*,auto,2,round",
+            "color": "#33aa33",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "in_octets",
+            "hidden": false,
+            "axis": "l"
+        }
+    ]
+}
