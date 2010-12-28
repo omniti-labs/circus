@@ -1,0 +1,18 @@
+Setup:
+
+ * Go to https://circonus.com/user/tokens
+ * Click the + button to generate a new token and set permissions for the new
+   token
+ * Store the token in ~/.circusrc:
+
+ [general]
+ default_account=MyAccount
+
+ [tokens]
+ MyAccount=e4e6fe5f-8548-485b-9789-4e112ea1689f
+
+ * Run the client with a simple comand:
+    ./client.py list_accounts
+ * You will get an error saying that the token needs to be validated.
+ * Refresh the API token webpage and click the Allow Access button that should
+   now be showing.
