@@ -235,6 +235,10 @@ class CirconusAPI(object):
                 data = {}
             raise CirconusAPIError(e.code, data)
         response = json.load(fh)
+        # Deal with the unlikely case that we get an error with a 200 return
+        # code
+        if not response.get('success', False):
+            raise CirconusAPIError(200, data)
         fh.close()
         return response
 
@@ -248,8 +252,20 @@ class AccessDenied(CirconusAPIException):
     pass
 
 class CirconusAPIError(CirconusAPIException):
+    """Exception class for any errors thrown by the circonus API.
+
+    Attributes:
+        code -- the http code returned
+        data -- the json object returned by the API
+        success -- whether the request succeeded or failed (this is usually
+                    false)
+        error -- the error message returned by the API
+    """
     def __init__(self, code, data):
         self.code = code
         self.data = data
         self.success = data.get('success', False)
         self.error = data.get('error', '')
+
+    def __str__(self):
+        return "HTTP %s - %s" % (self.code, self.error)

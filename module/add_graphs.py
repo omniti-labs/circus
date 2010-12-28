@@ -108,9 +108,6 @@ class Module(object):
             print "Adding graph: %s..." % graph_data['title'],
             try:
                 rv = self.api.add_graph(graph_data = json.dumps(graph_data))
-                if rv.get('success', False):
-                    print "Success"
-                else:
-                    print "Failed"
+                print "Success"
             except circonusapi.CirconusAPIError, e:
                 print "Failed\n    %s" % e.error
