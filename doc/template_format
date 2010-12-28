@@ -1,0 +1,45 @@
+Based on the graph API. Graph templates are JSON objects with the following
+contents:
+
+title (required)
+style (line | area, defaults to area)
+min_left_y
+max_left_y
+min_right_y
+max_right_y
+datapoints ARRAY
+    check_id (required)
+    metric_name (required)
+    derive (derive | counter | false defaults to false)
+    hidden (default false)
+    color (#xxxxxx optional)
+    stack (integer of stack set to add this to)
+    metric_type (text | numeric)
+    name (display name for datapoint, default is
+            check_name`target`module`agent_name`metric_name)
+    display_expression - reconnoiter_display_expression
+    source_expression - reconnoiter_source_expression
+    axis (l or r defaults to l)
+guides ARRAY
+    name (defaults to Guide #)
+    hidden (true | false)
+    display_math
+    value
+    color (#xxxxxx optional)
+
+Substitutions are of the form {name}:
+
+    {check_id}     - The check ID
+    {check_name}   - The check name
+    {check_target} - The target of the check (IP address)
+    {check_agent}  - The agent the check is run from
+
+    The following are used with the add_graphs command where a pattern is
+    given on the command line:
+
+    {groupN}       - Matching groups (the parts in parentheses) in the
+                        pattern given on the command line. (replace N with
+                        a group number)
+
+    You can also use named matching groups - (?P<groupname>...) in the
+    pattern and {groupname} in the graph template.

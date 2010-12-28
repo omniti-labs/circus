@@ -15,6 +15,13 @@ class Template(object):
         """Substitute parameters in the graph template"""
         return self._process(self.template, params)
 
+    def get_metrics(self):
+        """Returns a list of metrics specified in the graph template"""
+        return [{
+            'name': i['metric_name'],
+            'type': i['metric_type']
+        } for i in self.template['datapoints']]
+
     def _process(self, i, params):
         if type(i) == dict:
             return self._process_dict(i, params)
@@ -37,10 +44,8 @@ class Template(object):
         return new_l
 
     def _process_str(self, s, params):
-        # Custom templating for number types - if the formatting is for a
-        # single number, return that number and don't format as string
-        m = re.match("%\((\S+)\)d", s)
-        if m:
-            return int(params[m.group(1)])
-        # Otherwise, use standard python templating
-        return s % params
+        # Special case the check_id - make it an integer if it's the only
+        # thing present in the string
+        if s == "{check_id}":
+            return int(params['check_id'])
+        return re.sub("{(\S+)}", lambda m: params[m.group(1)], s)

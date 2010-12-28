@@ -1,11 +1,11 @@
 {
-    "title": "Switch %(switch_name)s port %(port)s",
+    "title": "Switch {group1} port {group2}",
     "style": "area",
     "datapoints": [
         {
             "data_formula": "8,*",
             "name": "Out octets",
-            "check_id": "%(check_id)d",
+            "check_id": "{check_id}",
             "legend_formula": "auto,2,round",
             "color": "#4a00dc",
             "derive": "counter",
@@ -17,8 +17,8 @@
         {
             "data_formula": "-8,*,auto",
             "name": "In Octets",
-            "check_id": "%(check_id)d",
-            "legend_formula": "1,*,auto,2,round",
+            "check_id": "{check_id}",
+            "legend_formula": "-1,*,auto,2,round",
             "color": "#33aa33",
             "derive": "counter",
             "metric_type": "numeric",
