@@ -29,7 +29,7 @@ class CirconusAPI(object):
             },
             'edit_check_bundle': {
                 'form_method': 'POST',
-                'required': ['bundle_id', 'metric_name', 'period', 'timeout'],
+                'required': ['bundle_id', 'metric_name'],
                 'optional': ['*']
             },
             'enable_check_bundle': {
@@ -204,11 +204,12 @@ class CirconusAPI(object):
         # i.e. "a" : [1,2,3] to (eventually) a=1&a=2&a=3
         plist = []
         for k in parameters:
+            demunged_k = k.replace('_dot_', '.')
             if type(parameters[k]) == list:
                 for v in parameters[k]:
-                    plist.append((k,v))
+                    plist.append((demunged_k,v))
             else:
-                plist.append((k, parameters[k]))
+                plist.append((demunged_k, parameters[k]))
         url = "https://%s/api/json/%s" % (self.hostname, method)
         if form_method == 'POST':
             data = urllib.urlencode(plist)
@@ -237,7 +238,7 @@ class CirconusAPI(object):
         response = json.load(fh)
         # Deal with the unlikely case that we get an error with a 200 return
         # code
-        if not response.get('success', False):
+        if type(response) == dict and not response.get('success', True):
             raise CirconusAPIError(200, data)
         fh.close()
         return response
