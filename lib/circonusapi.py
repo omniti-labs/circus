@@ -229,7 +229,11 @@ class CirconusAPI(object):
                 raise TokenNotValidated
             if e.code == 403:
                 raise AccessDenied
-            raise
+            try:
+                data = json.load(e)
+            except ValueError:
+                data = {}
+            raise CirconusAPIError(e.code, data)
         response = json.load(fh)
         fh.close()
         return response
@@ -242,3 +246,10 @@ class TokenNotValidated(CirconusAPIException):
 
 class AccessDenied(CirconusAPIException):
     pass
+
+class CirconusAPIError(CirconusAPIException):
+    def __init__(self, code, data):
+        self.code = code
+        self.data = data
+        self.success = data.get('success', False)
+        self.error = data.get('error', '')
