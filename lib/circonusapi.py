@@ -177,7 +177,8 @@ class CirconusAPI(object):
                 params = set(parameters.keys())
                 if not params >= required:
                     raise TypeError("%s requires the following arguments: %s" %
-                                    (name, ' '.join(self.methods[name][0])))
+                                    (name, ' '.join(
+                                        self.methods[name]['required'])))
                 if '*' not in optional and not params <= (required | optional):
                     raise TypeError("Invalid parameters given to %s" % name)
 
