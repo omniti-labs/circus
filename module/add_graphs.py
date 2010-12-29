@@ -5,7 +5,6 @@ import json
 import logging
 import re
 import sys
-import urllib2
 
 import graphutil
 import util
@@ -57,7 +56,7 @@ class Module(object):
 
     def find_checks(self, pattern):
         print "Retrieving matching checks"
-        all_checks = self.api.list_checks()
+        all_checks = self.api.list_checks(active='true')
         filtered_checks = []
         groups = {}
         for c in sorted(all_checks):
@@ -77,7 +76,11 @@ class Module(object):
         print "Verifying that checks have the correct metrics"
         template_metrics = template.get_metrics()
         checks_with_wrong_metrics = []
+        count = 0
         for c in checks:
+            count += 1
+            print "\r%s/%s" % (count, len(checks)),
+            sys.stdout.flush()
             metrics = self.api.list_metrics(check_id=c['check_id'])
             metric_name_types = [
                 {'name': m['name'], 'type': m['type']} for m in metrics]
