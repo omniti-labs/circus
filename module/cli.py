@@ -8,10 +8,10 @@ class Module(object):
         self.account = account
 
     def command(self, opts):
-        """Start a python interpreter with access to the Circonus API.
+        """Start a python CLI with access to the Circonus API.
 
         This allows you to run api commands interactively. Access the api with
-        self.api. For example: self.api.list_checks().
+        self.api. For example: self.api.list_checks(active='active').
 
         Look at the circonusapi module for information on accessing the API.
         """

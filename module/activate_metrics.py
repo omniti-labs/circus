@@ -12,6 +12,9 @@ class Module(object):
 
         Options:
             -e - enable the metrics
+
+        Arguments:
+            check_id    --  Which check to list metrics for
         """
         rv = self.api.list_checks()
         check = None

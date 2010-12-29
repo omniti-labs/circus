@@ -1,5 +1,4 @@
 __cmdname__ = "add_graphs"
-__cmdopts__ = "cg"
 
 import json
 import logging
@@ -19,8 +18,9 @@ class Module(object):
     def command(self, opts, template_name, pattern):
         """Add graphs in bulk based on a template
 
-        template_name   - the name of the template file
-        pattern         - a regex to match on check names
+        Arguments:
+            template_name   -- the name of the template file
+            pattern         -- a regex to match on check names
 
         The templates are in json, and is in the same format as the output of
         the dump_graph command.

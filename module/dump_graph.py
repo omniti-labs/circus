@@ -18,11 +18,15 @@ class Module(object):
         This is intended for use when adding graphs via the API. The output is
         given in a format suitable for inclusion into the add_graph api as
         graph_data.
+
+        Arguments:
+            graph_id    -- the id of the graph to dump
         """
         try:
             uuid.UUID(graph_id)
         except ValueError:
-            logging.error("Invalid graph ID specified")
+            logging.error("Invalid graph ID specified. It should look "
+                          "like a UUID")
             sys.exit(1)
         rv = self.api.get_graph(graph_id=graph_id)
         # Prettify the returned json before printing

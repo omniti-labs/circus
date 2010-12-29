@@ -15,14 +15,15 @@ class Module(object):
     def command(self, opts, pattern, replacement):
         """Rename multiple checks at once
 
-        Pattern     - a regex to select the checks to rename
-        Replacement - what to replace the check name with
+        Options:
+            -a - Include inactive and deleted checks also
+
+        Arguments:
+            pattern     -- a regex to select the checks to rename
+            replacement -- what to replace the check name with
 
         The replacement can contain \1, \2 etc. to refer to groups in the
         pattern.
-
-        Options:
-            -a - Include inactive and deleted checks also
         """
         active = 'true'
         if ('-a', '') in opts:

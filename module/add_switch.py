@@ -36,11 +36,13 @@ class Module(object):
         available and that the switch be accessible over snmp from the machine
         that this command is run from.
 
-        Target - The ip address of the switch
-        Agent  - The name of the agent you wish circonus to use for the checks
-        Community - SNMP community for the switch
-        Friendly_name - what to call the switch in the check name. This is
-                        usually the (short) hostname of the switch.
+        Arguments:
+            target          -- The ip address of the switch
+            agent           -- The name of the agent you wish circonus to use
+                               for the checks
+            community       -- SNMP community for the switch
+            friendly_name   -- what to call the switch in the check name. This
+                               is usually the (short) hostname of the switch.
         """
         # TODO - abstract this away and prompt the user for a list of
         # available agents

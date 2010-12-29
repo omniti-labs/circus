@@ -15,7 +15,8 @@ class Module(object):
     def command(self, opts, pattern):
         """Delete multiple graphs at once
 
-        Pattern     - a regex to select the graphs to delete
+        Arguments:
+            pattern     -- a regex to select the graphs to delete
         """
         rv = self.api.list_graphs()
         filtered_graphs = []

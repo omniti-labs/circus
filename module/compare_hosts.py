@@ -1,8 +1,7 @@
-import collections
-
 __cmdname__ = 'compare_hosts'
 __cmdopts__ = ''
 
+import collections
 
 class recursivedefaultdict(collections.defaultdict):
     def __init__(self):
@@ -15,6 +14,9 @@ class Module(object):
     def command(self, opts, host1, host2):
         """Compare the metrics of two hosts
 
+        Arguments:
+            host1   --  The first host to compare
+            host2   --  The host to compare it with
         """
         rv = self.api.list_checks()
         ips = [host1, host2]

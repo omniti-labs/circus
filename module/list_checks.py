@@ -14,6 +14,9 @@ class Module(object):
         Options:
             -l - Long listing (include extra information)
             -a - Include inactive and deleted checks also
+
+        Arguments:
+            pattern --  A regex to filter which checks are returned
         """
         active = 'true'
         if ('-a', '') in opts:

@@ -15,8 +15,9 @@ class Module(object):
     def command(self, opts, pattern, replacement):
         """Rename multiple graphs at once
 
-        Pattern     - a regex to select the graphs to rename
-        Replacement - what to replace the graph name with
+        Arguments:
+            pattern     -- a regex to select the graphs to rename
+            replacement -- what to replace the graph name with
 
         The replacement can contain \1, \2 etc. to refer to groups in the
         pattern.
