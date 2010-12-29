@@ -4,7 +4,7 @@
     "datapoints": [
         {
             "data_formula": "8,*",
-            "name": "Out octets",
+            "name": "Outbound traffic (bps)",
             "check_id": "{check_id}",
             "legend_formula": "auto,2,round",
             "color": "#4a00dc",
@@ -16,7 +16,7 @@
         },
         {
             "data_formula": "-8,*,auto",
-            "name": "In Octets",
+            "name": "Inbound traffic (bps) ",
             "check_id": "{check_id}",
             "legend_formula": "-1,*,auto,2,round",
             "color": "#33aa33",
