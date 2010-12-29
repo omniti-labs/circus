@@ -1,13 +1,14 @@
-#!/usr/bin/env python
 __cmdname__ = 'list_checks'
 __cmdopts__ = 'la'
+
+import re
 
 class Module(object):
     def __init__(self, api, account):
         self.api = api
         self.account = account
 
-    def command(self, opts):
+    def command(self, opts, pattern=''):
         """List the checks for an account
 
         Options:
@@ -18,8 +19,15 @@ class Module(object):
         if ('-a', '') in opts:
             active = ''
         rv = self.api.list_checks(active=active)
+        if pattern:
+            filtered_checks = []
+            for c in rv:
+                if re.search(pattern, c['name']):
+                    filtered_checks.append(c)
+        else:
+            filtered_checks = rv
         print "Check List for %s" % self.account
-        for check in sorted(rv):
+        for check in sorted(filtered_checks):
             check_active = ''
             if check['active'] == 'false':
                 check_active = ' (inactive)'
