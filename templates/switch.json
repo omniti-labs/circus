@@ -1,5 +1,5 @@
 {
-    "title": "Switch {group1} port {group2}",
+    "title": "{group1} {group2} traffic",
     "style": "area",
     "datapoints": [
         {
