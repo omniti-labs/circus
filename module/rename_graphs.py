@@ -2,6 +2,7 @@ __cmdname__ = 'rename_graphs'
 
 import json
 import re
+import sys
 
 import circonusapi
 import util
@@ -33,6 +34,7 @@ class Module(object):
         if util.confirm():
             for g in filtered_graphs:
                 print "Renaming %s..." % g['title'],
+                sys.stdout.flush()
                 try:
                     rv = self.api.get_graph(
                         graph_id=g['graph_id'])

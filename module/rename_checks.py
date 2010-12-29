@@ -2,6 +2,7 @@ __cmdname__ = 'rename_checks'
 __cmdopts__ = 'a'
 
 import re
+import sys
 
 import circonusapi
 import util
@@ -43,6 +44,7 @@ class Module(object):
         if util.confirm():
             for c in filtered_checks:
                 print "Renaming %s..." % c['name'],
+                sys.stdout.flush()
                 metrics = [m['name'] for m in
                            self.api.list_metrics(check_id=c['check_id'])]
                 params = {

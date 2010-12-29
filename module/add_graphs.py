@@ -106,6 +106,7 @@ class Module(object):
             params.update(groups[c['check_id']])
             graph_data = template.sub(params)
             print "Adding graph: %s..." % graph_data['title'],
+            sys.stdout.flush()
             try:
                 rv = self.api.add_graph(graph_data = json.dumps(graph_data))
                 print "Success"

@@ -2,6 +2,7 @@ __cmdname__ = 'delete_graphs'
 
 import json
 import re
+import sys
 
 import circonusapi
 import util
@@ -27,6 +28,7 @@ class Module(object):
         if util.confirm():
             for g in filtered_graphs:
                 print "Deleting %s..." % g['title'],
+                sys.stdout.flush()
                 try:
                     rv = self.api.remove_graph(graph_id=g['graph_id'])
                     print "Success"
