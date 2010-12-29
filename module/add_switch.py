@@ -2,9 +2,12 @@ __cmdname__ = "add_switch"
 __cmdopts__ = ""
 
 import logging
+import re
+import subprocess
 import sys
 
-import graphutil
+import circonusapi
+import util
 
 class Module(object):
     def __init__(self, api, account):
@@ -21,11 +24,26 @@ class Module(object):
             'in_errors':    "%s.14" % prefix_1,
             'out_errors':   "%s.20" % prefix_1
         }
+        self.port_name_prefix = "%s.1" % prefix_2
         self.api = api
         self.account = account
 
-    def command(self, opts, target, agent, community, port_count,
-                friendly_name):
+    def command(self, opts, target, agent, community, friendly_name):
+        """Adds snmp checks for a switch
+
+        This command queries the switch using snmpwalk to discover what ports
+        to add checks for. This requires that the snmpwalk command be
+        available and that the switch be accessible over snmp from the machine
+        that this command is run from.
+
+        Target - The ip address of the switch
+        Agent  - The name of the agent you wish circonus to use for the checks
+        Community - SNMP community for the switch
+        Friendly_name - what to call the switch in the check name. This is
+                        usually the (short) hostname of the switch.
+        """
+        # TODO - abstract this away and prompt the user for a list of
+        # available agents
         rv = self.api.list_agents()
         agents = dict([(i['name'], i['agent_id']) for i in rv])
         try:
@@ -35,13 +53,29 @@ class Module(object):
             sys.exit(1)
         self.target = target
         self.community = community
-        self.port_count = port_count
         self.friendly_name = friendly_name
-        self.add_check()
+        self.ports = self.get_ports(target, community)
+        print "About to add checks for the following ports:"
+        for port in sorted(self.ports):
+            print "   ", port
+        if util.confirm():
+            self.add_checks()
 
-    def add_check(self):
-        for i in range(1, int(self.port_count)):
-            logging.debug("Adding port %s" % i)
+    def get_ports(self, target, community):
+        output = subprocess.Popen(("/usr/bin/snmpwalk", "-On", "-v2c", "-c",
+            community, target, self.port_name_prefix),
+            stdout=subprocess.PIPE).communicate()[0]
+        ports = {}
+        for line in output.split("\n"):
+            m = re.match(r'[.0-9]+\.(\d+) = STRING: "(?:ethernet)?([0-9/]+)"',
+                        line)
+            if m:
+                ports[m.group(2)] = m.group(1)
+        return ports
+
+    def add_checks(self):
+        for name, idx in sorted(self.ports.items()):
+            print "Adding port %s..." % name,
             metric_names = []
             params = {
                     'account': self.account,
@@ -49,16 +83,21 @@ class Module(object):
                     'target' : self.target,
                     'module' : "snmp",
                     'display_name_%s' % self.target :
-                        "%s port %s interface stats" % (self.friendly_name, i),
+                        "%s port %s interface stats" % (
+                            self.friendly_name, name),
                     'community' : self.community,
             }
             for k in self.metrics:
                 metric_names.append(k)
-                params["oid_%s" % k] = "%s.%s" % (self.metrics[k], i)
+                params["oid_%s" % k] = "%s.%s" % (self.metrics[k], idx)
             params['metric_name'] = metric_names
 
             for k in sorted(params):
                 logging.debug("%20s = %s" % (k, params[k]))
 
-            logging.debug("Adding check bundle")
-            rv = self.api.add_check_bundle(**params)
+            try:
+                rv = self.api.add_check_bundle(**params)
+                print "Success"
+            except circonusapi.CirconusAPIError, e:
+                print "Failed"
+                print "   ", e.error
