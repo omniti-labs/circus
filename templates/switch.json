@@ -25,6 +25,16 @@
             "metric_name": "in_octets",
             "hidden": false,
             "axis": "l"
+        },
+        {
+            "derive": false,
+            "metric_name": "name",
+            "color": "#caac00",
+            "check_id": "{check_id}",
+            "metric_type": "text",
+            "hidden": false,
+            "axis": "l",
+            "name": "Port Description"
         }
     ]
 }
