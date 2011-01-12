@@ -92,7 +92,9 @@ class CmdParse(object):
             minlen = maxlen - len(funcargs[3])
         else:
             minlen = maxlen
-        if arglen >= minlen and arglen <= maxlen:
+        # Funcargs[1] means that we have a *args parameter and so we can have
+        # as many args as we want
+        if arglen >= minlen and (funcargs[1] or arglen <= maxlen):
             return callback(cmdopts, *args[1:])
         else:
             self.cmd_usage(cmd)
@@ -126,6 +128,9 @@ class CmdParse(object):
             args = args[:-len(argspec[3])]
         else:
             optargs = []
+        # Show *args parameters if present
+        if argspec[1]:
+            optargs.append("%s..." % argspec[1])
         if args[0] == 'self':
             args = args[1:]
         args = args[1:] # Strip off the mandatory opts argument

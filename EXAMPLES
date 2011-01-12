@@ -1,0 +1,12 @@
+Add 0/1/ to the beginning of each port name on switch checks:
+
+./client.py -a OmniTI rename_checks "(switch-va-3 port) (\d+)" "\1 0/1/\2"
+
+Add graphs for all checks beginning switch-va-3 port:
+
+./client.py -a OmniTI add_graphs switch "(switch-va-3) port (\S*)"
+
+Add a http check for omniti.com:
+
+./client.py -a OmniTI add_check http "www.omniti.com - http" \
+    66.225.209.7 "Ashburn, VA, US" url=http://www.omniti.com/

@@ -1,0 +1,7 @@
+{
+    "url": "{REQUIRED}",
+    "port": 80,
+    "metric_name": [
+        "bytes", "tt_firstbyte", "code", "duration", "tt_connect"],
+    "module": "http"
+}
