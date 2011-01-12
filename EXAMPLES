@@ -8,5 +8,4 @@ Add graphs for all checks beginning switch-va-3 port:
 
 Add a http check for omniti.com:
 
-./client.py -a OmniTI add_check http "www.omniti.com - http" \
-    66.225.209.7 "Ashburn, VA, US" url=http://www.omniti.com/
+./client.py -a OmniTI add_check http www.omniti.com "Ashburn, VA, US"

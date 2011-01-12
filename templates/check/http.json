@@ -1,5 +1,6 @@
 {
-    "url": "{REQUIRED}",
+    "display_name_{targetip}": "{target} - http",
+    "url": "http://{target}/",
     "port": 80,
     "metric_name": [
         "bytes", "tt_firstbyte", "code", "duration", "tt_connect"],

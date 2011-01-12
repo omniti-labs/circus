@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import json
+import socket
 
 def confirm(text="OK to continue?"):
     response = None
@@ -24,6 +25,11 @@ def get_agent(api, agent_name):
         for a in agents:
             print "   %s" % a
         sys.exit(1)
+
+def resolve_target(target):
+    """Resolves a target name into an IP. Allows specifying targets by name
+    on the command line."""
+    return socket.gethostbyname(target)
 
 class Template(object):
     """Generic template class for json templates"""
@@ -47,7 +53,8 @@ class Template(object):
     def _process_dict(self, d, params):
         new_d = {}
         for k, v in d.items():
-            new_d[k] = self._process(v, params)
+            new_k = self._process_str(k, params)
+            new_d[new_k] = self._process(v, params)
         return new_d
 
     def _process_list(self, l, params):
