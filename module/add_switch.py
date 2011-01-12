@@ -37,7 +37,7 @@ class Module(object):
         that this command is run from.
 
         Arguments:
-            target          -- The ip address of the switch
+            target          -- The address of the switch
             agent           -- The name of the agent you wish circonus to use
                                for the checks
             community       -- SNMP community for the switch
@@ -53,7 +53,7 @@ class Module(object):
         except KeyError:
             logging.error("Invalid/Unknown Agent: %s" % agent)
             sys.exit(1)
-        self.target = target
+        self.target = util.resolve_target(target)
         self.community = community
         self.friendly_name = friendly_name
         self.ports = self.get_ports(target, community)
