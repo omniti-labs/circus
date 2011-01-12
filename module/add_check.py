@@ -13,12 +13,12 @@ class Module(object):
         self.api = api
         self.account = account
 
-    def command(self, opts, template_name, name, target, agent, *params):
+    def command(self, opts, template_name, check_name, target, agent, *params):
         """Adds a check based on a template
 
         Arguments:
             template_name   -- the name of the template file
-            name            -- the name for the check
+            check_name      -- the name for the check
             target          -- the target of the check
             agent           -- the agent to run the check from
             params          -- other parameters (see below)
@@ -42,7 +42,7 @@ class Module(object):
         # Add other parameters
         template['agent_id'] = util.get_agent(self.api, agent)
         template['target'] = target
-        template['display_name_%s' % target] = name
+        template['display_name_%s' % target] = check_name
 
         for k in template:
             if template[k] == '{REQUIRED}':
