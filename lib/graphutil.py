@@ -4,7 +4,8 @@ import os
 import os.path
 import re
 
-template_dir=os.path.join(os.path.dirname(__file__), "..", "templates")
+template_dir=os.path.join(os.path.dirname(__file__), "..", "templates",
+                          "graph")
 
 class Template(object):
     def __init__(self, name):
