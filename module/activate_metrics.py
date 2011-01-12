@@ -8,7 +8,7 @@ class Module(object):
         self.account = account
 
     def command(self, opts, check_id):
-        """List inactive metrics for a check, and optionally enable them
+        """List inactive metrics, optionally enabling them
 
         Options:
             -e - enable the metrics
