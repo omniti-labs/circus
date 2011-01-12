@@ -1,6 +1,9 @@
 """Various utility functions"""
 import logging
 import sys
+import os
+import re
+import json
 
 def confirm(text="OK to continue?"):
     response = None
@@ -21,3 +24,37 @@ def get_agent(api, agent_name):
         for a in agents:
             print "   %s" % a
         sys.exit(1)
+
+class Template(object):
+    """Generic template class for json templates"""
+    def __init__(self, name, template_dir):
+        with open(os.path.join(template_dir, "%s.json" % name)) as fh:
+            self.template = json.load(fh)
+
+    def sub(self, params):
+        """Substitute parameters in the template"""
+        return self._process(self.template, params)
+
+    def _process(self, i, params):
+        if type(i) == dict:
+            return self._process_dict(i, params)
+        if type(i) == list:
+            return self._process_list(i, params)
+        if type(i) == str or type(i) == unicode:
+            return self._process_str(i, params)
+        return i
+
+    def _process_dict(self, d, params):
+        new_d = {}
+        for k, v in d.items():
+            new_d[k] = self._process(v, params)
+        return new_d
+
+    def _process_list(self, l, params):
+        new_l = []
+        for i in l:
+            new_l.append(self._process(i, params))
+        return new_l
+
+    def _process_str(self, s, params):
+        return re.sub("{(\S+)}", lambda m: params[m.group(1)], s)
