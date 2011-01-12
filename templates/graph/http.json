@@ -1,0 +1,36 @@
+{
+    "style": "area",
+    "title": "{group1} HTTP duration",
+    "datapoints": [
+        {
+            "derive": false,
+            "metric_name": "tt_connect",
+            "color": "#33aa33",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} time to initial connect"
+        },
+        {
+            "derive": false,
+            "metric_name": "tt_firstbyte",
+            "color": "#4a00dc",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} time to first byte"
+        },
+        {
+            "derive": false,
+            "metric_name": "duration",
+            "color": "#caac00",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} total duration"
+        }
+    ]
+}
