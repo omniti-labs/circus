@@ -90,7 +90,7 @@ class CirconusAPI(object):
             },
             'list_rules': {
                 'form_method': 'GET',
-                'required': ['check_id', 'metric_name']
+                'optional': ['check_id', 'metric_name']
             },
             'add_metric_rule': {
                 'form_method': 'POST',
