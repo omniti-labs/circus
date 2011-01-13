@@ -5,7 +5,7 @@ import getopt
 class CmdParse(object):
     def __init__(self, options=None):
         self.cmd_map = {}
-        self.scriptname = sys.argv[0]
+        self.scriptname = 'circus'
         self.add('help', self.help)
         self.options = {}
         self.args = None

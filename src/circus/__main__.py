@@ -3,6 +3,10 @@ import getopt
 import os
 import sys
 
+# Add the lib dir to the current python path - allows modules to use utility
+# libraries
+sys.path.append(os.path.dirname(__file__))
+
 import circonusapi
 import cmdparse
 import log

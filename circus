@@ -1,3 +1,4 @@
 #!/bin/bash
-cd ${0%/*}/src
-python circus "$@"
+BASEDIR=${0%/*}
+export PYTHONPATH="$BASEDIR/src"
+$BASEDIR/scripts/circus "$@"
