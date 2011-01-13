@@ -57,4 +57,8 @@ class Module(object):
         substituted['agent_id'] = util.get_agent(self.api, agent)
         substituted['target'] = targetip
 
-        self.api.add_check_bundle(**substituted)
+        try:
+            self.api.add_check_bundle(**substituted)
+            print "Check added"
+        except CirconusError, e:
+            print "Failed to add check: ", e.error
