@@ -3,8 +3,7 @@ __cmdname__ = 'dump_graph'
 __cmdopts__ = ''
 
 import json
-import logging
-import pprint
+import log
 import sys
 import uuid
 
@@ -25,8 +24,7 @@ class Module(object):
         try:
             uuid.UUID(graph_id)
         except ValueError:
-            logging.error("Invalid graph ID specified. It should look "
-                          "like a UUID")
+            log.error("Invalid graph ID specified. It should look like a UUID")
             sys.exit(1)
         rv = self.api.get_graph(graph_id=graph_id)
         # Prettify the returned json before printing

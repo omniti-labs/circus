@@ -1,5 +1,5 @@
 """Various utility functions"""
-import logging
+import log
 import sys
 import os
 import re
@@ -20,10 +20,10 @@ def get_agent(api, agent_name):
     try:
         return agents[agent_name]
     except KeyError:
-        logging.error("Invalid/Unknown Agent: %s" % agent_name)
-        print "Valid Agents:"
+        log.error("Invalid/Unknown Agent: %s" % agent_name)
+        log.msg("Valid Agents:")
         for a in agents:
-            print "   %s" % a
+            log.msgnf("    %s" % a)
         sys.exit(1)
 
 def resolve_target(target):

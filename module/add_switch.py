@@ -1,7 +1,7 @@
 __cmdname__ = "add_switch"
 __cmdopts__ = ""
 
-import logging
+import log
 import re
 import subprocess
 import sys
@@ -51,15 +51,15 @@ class Module(object):
         try:
             self.agent = agents[agent]
         except KeyError:
-            logging.error("Invalid/Unknown Agent: %s" % agent)
+            log.error("Invalid/Unknown Agent: %s" % agent)
             sys.exit(1)
         self.target = util.resolve_target(target)
         self.community = community
         self.friendly_name = friendly_name
         self.ports = self.get_ports(target, community)
-        print "About to add checks for the following ports:"
+        log.msg("About to add checks for the following ports:")
         for port in sorted(self.ports):
-            print "   ", port
+            log.msg(port)
         if util.confirm():
             self.add_checks()
 
@@ -77,7 +77,7 @@ class Module(object):
 
     def add_checks(self):
         for name, idx in sorted(self.ports.items()):
-            print "Adding port %s..." % name,
+            log.msgnb("Adding port %s..." % name)
             metric_names = []
             params = {
                     'account': self.account,
@@ -95,11 +95,11 @@ class Module(object):
             params['metric_name'] = metric_names
 
             for k in sorted(params):
-                logging.debug("%20s = %s" % (k, params[k]))
+                log.debug("%20s = %s" % (k, params[k]))
 
             try:
                 rv = self.api.add_check_bundle(**params)
-                print "Success"
+                log.msgnf("Success")
             except circonusapi.CirconusAPIError, e:
-                print "Failed"
-                print "   ", e.error
+                log.msgnf("Failed")
+                log.error(e.error)

@@ -2,7 +2,6 @@
 
 import ConfigParser
 import getopt
-import logging
 import os
 import sys
 
@@ -12,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 import circonusapi
 import cmdparse
+import log
 
 class CirconusClient(object):
     def __init__(self):
@@ -48,7 +48,7 @@ class CirconusClient(object):
                 module = __import__('module.%s' % modname, globals(),
                                     locals(), [modname])
             except ImportError, e:
-                logging.error("Unable to load module %s: %s" % (modname, e))
+                log.error("Unable to load module %s: %s" % (modname, e))
                 continue
             module_object = module.Module(self.api, self.account)
             modules.append(module_object)
@@ -64,13 +64,8 @@ class CirconusClient(object):
 
     def init_logger(self, debug):
         if debug:
-            level = logging.DEBUG
-        else:
-            level=logging.INFO
-        logging.basicConfig(level=level,
-            format='%(asctime)s %(levelname)s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S')
-        logging.debug("Debugging mode on")
+            log.debug_enabled = True
+        log.debug("Debugging mode on")
 
     def load_config(self, configfile):
         config = ConfigParser.SafeConfigParser()
@@ -79,9 +74,9 @@ class CirconusClient(object):
         try:
             config.readfp(open(os.path.join(os.path.dirname(__file__),
                                                  "data", "defaults")))
-            logging.debug("Loaded default configuration")
+            log.debug("Loaded default configuration")
         except IOError:
-            logging.error("Unable to load default configuraiton. The program"
+            log.error("Unable to load default configuraiton. The program"
                     " may not work correctly.")
 
         # Now load the system/user specific config (if any)
@@ -90,7 +85,7 @@ class CirconusClient(object):
         else:
             loaded = config.read(['/etc/circusrc',
                                   os.path.expanduser('~/.circusrc')])
-        logging.debug("Loaded config files: %s" % ', '.join(loaded))
+        log.debug("Loaded config files: %s" % ', '.join(loaded))
         return config
 
     def get_api_token(self):
@@ -98,7 +93,7 @@ class CirconusClient(object):
         try:
             token = self.config.get('tokens', account)
         except ConfigParser.NoOptionError:
-            logging.error("No token found for account %s. Please set one"
+            log.error("No token found for account %s. Please set one"
                             " up in the config file" % account)
             sys.exit(1)
         return token
@@ -108,7 +103,7 @@ class CirconusClient(object):
         if not account:
             account = self.config.get('general', 'default_account')
             if not account:
-                logging.error("No default account has been set up"
+                log.error("No default account has been set up"
                               " and one wasn't specified on the command line")
                 sys.exit(1)
         return account
@@ -117,11 +112,11 @@ class CirconusClient(object):
         try:
             status = self.cmdparser.parse()
         except circonusapi.AccessDenied:
-            logging.error(
+            log.error(
                 "Access denied. Perhaps you need to generate a new token")
             status = 1
         except circonusapi.TokenNotValidated:
-            logging.error("API token requires validation")
+            log.error("API token requires validation")
             status = 1
 
         if status:

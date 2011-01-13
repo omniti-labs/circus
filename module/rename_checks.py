@@ -6,6 +6,7 @@ import sys
 
 import circonusapi
 import util
+import log
 
 class Module(object):
     def __init__(self, api, account):
@@ -38,14 +39,13 @@ class Module(object):
                     filtered_checks.append(check)
                     bundles[check['bundle_id']] = True
         renames = {}
-        print "Going to perform the following renames:"
+        log.msg("Going to perform the following renames:")
         for c in filtered_checks:
             renames[c['name']] = re.sub(pattern, replacement, c['name'])
-            print "    %s => %s" % (c['name'], renames[c['name']])
+            log.msg("%s => %s" % (c['name'], renames[c['name']]))
         if util.confirm():
             for c in filtered_checks:
-                print "Renaming %s..." % c['name'],
-                sys.stdout.flush()
+                log.msgnb("Renaming %s... " % c['name'])
                 metrics = [m['name'] for m in
                            self.api.list_metrics(check_id=c['check_id'])]
                 params = {
@@ -55,7 +55,7 @@ class Module(object):
                 }
                 try:
                     rv = self.api.edit_check_bundle(**params)
-                    print "Success"
+                    log.msgnf("Success")
                 except circonusapi.CirconusAPIError, e:
-                    print "Failed"
-                    print "   ", e.error
+                    log.msgnf("Failed")
+                    log.error(e.error)

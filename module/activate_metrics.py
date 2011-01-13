@@ -2,6 +2,8 @@
 __cmdname__ = 'enable_metrics'
 __cmdopts__ = 'e'
 
+import log
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -22,7 +24,7 @@ class Module(object):
             if str(c['check_id']) == check_id:
                 check = c
         if not check:
-            print "Check %s not found\n" % check_id;
+            log.error("Check %s not found\n" % check_id)
             return
         rv = self.api.list_metrics(check_id = check_id)
         to_enable = []

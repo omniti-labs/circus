@@ -1,7 +1,7 @@
 __cmdname__ = "add_graphs"
 
 import json
-import logging
+import log
 import re
 import sys
 
@@ -41,21 +41,21 @@ class Module(object):
         try:
             template = graphutil.Template(template_name)
         except IOError:
-            print "Unable to open template %s" % template_name
+            log.error("Unable to open template %s" % template_name)
             sys.exit(1)
         checks, groups = self.find_checks(pattern)
         self.verify_metrics(template, checks)
-        print "About to add %s graphs for the following checks:" % (
-            template_name)
+        log.msg("About to add %s graphs for the following checks:" % (
+            template_name))
         for c in checks:
-            print "    %s (%s)" % (c['name'], c['agent'])
+            log.msg("    %s (%s)" % (c['name'], c['agent']))
         if not util.confirm():
-            print "Not adding graphs."
+            log.msg("Not adding graphs.")
             sys.exit()
         self.add_graphs(template, checks, groups)
 
     def find_checks(self, pattern):
-        print "Retrieving matching checks"
+        log.msg("Retrieving matching checks")
         all_checks = self.api.list_checks(active='true')
         filtered_checks = []
         groups = {}
@@ -73,7 +73,7 @@ class Module(object):
         return filtered_checks, groups
 
     def verify_metrics(self, template, checks):
-        print "Verifying that checks have the correct metrics"
+        log.msg("Verifying that checks have the correct metrics")
         template_metrics = template.get_metrics()
         checks_with_wrong_metrics = []
         count = 0
@@ -91,11 +91,12 @@ class Module(object):
                         'metric': m['name'],
                         'type': m['type']})
         if checks_with_wrong_metrics:
-            print "The following checks do not have metrics specified in" \
-                    " the template:"
+            log.msg("The following checks do not have metrics specified in"
+                    " the template:")
             for c in checks_with_wrong_metrics:
-                print "    %(name)s - %(metric)s (%(type)s)" % c
-            print "Not adding graphs. The template does not match the checks"
+                log.msg("%(name)s - %(metric)s (%(type)s)" % c)
+            log.error("Not adding graphs. The template does not match the"
+                      " checks")
             sys.exit(1)
 
     def add_graphs(self, template, checks, groups):
@@ -108,10 +109,10 @@ class Module(object):
             }
             params.update(groups[c['check_id']])
             graph_data = template.sub(params)
-            print "Adding graph: %s..." % graph_data['title'],
-            sys.stdout.flush()
+            log.msgnb("Adding graph: %s..." % graph_data['title'])
             try:
                 rv = self.api.add_graph(graph_data = json.dumps(graph_data))
-                print "Success"
+                log.msgnf("Success")
             except circonusapi.CirconusAPIError, e:
-                print "Failed\n    %s" % e.error
+                log.msgnf("Failed")
+                log.error(e.error)

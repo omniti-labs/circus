@@ -4,9 +4,9 @@ import json
 import os
 import sys
 
-import util
-
 import circonusapi
+import log
+import util
 
 class Module(object):
     def __init__(self, api, account):
@@ -47,8 +47,8 @@ class Module(object):
             try:
                 name, value = param.split('=', 1)
             except ValueError:
-                print "Invalid parameter: %s" % param
-                print "Extra parameters must be specified as name=value"
+                log.error("Invalid parameter: %s" % param)
+                log.error("Extra parameters must be specified as name=value")
                 sys.exit(1)
             template_params[name] = value
 
@@ -59,6 +59,6 @@ class Module(object):
 
         try:
             self.api.add_check_bundle(**substituted)
-            print "Check added"
+            log.msg("Check added")
         except CirconusError, e:
-            print "Failed to add check: ", e.error
+            log.error("Failed to add check: ", e.error)

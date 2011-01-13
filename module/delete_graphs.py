@@ -5,6 +5,7 @@ import re
 import sys
 
 import circonusapi
+import log
 import util
 
 class Module(object):
@@ -23,16 +24,15 @@ class Module(object):
         for g in sorted(rv, lambda a,b: cmp(a['title'], b['title'])):
             if re.search(pattern, g['title']):
                 filtered_graphs.append(g)
-        print "Going to DELETE the following graphs:"
+        log.msg("Going to DELETE the following graphs:")
         for g in filtered_graphs:
-            print "   ", g['title']
+            log.msg("   ", g['title'])
         if util.confirm():
             for g in filtered_graphs:
-                print "Deleting %s..." % g['title'],
-                sys.stdout.flush()
+                log.msgnb("Deleting %s..." % g['title'])
                 try:
                     rv = self.api.remove_graph(graph_id=g['graph_id'])
-                    print "Success"
+                    log.msgnf("Success")
                 except circonusapi.CirconusAPIError, e:
-                    print "Failed"
-                    print "   ", e.error
+                    log.msgnf("Failed")
+                    log.error(e.error)
