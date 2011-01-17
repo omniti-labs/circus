@@ -5,7 +5,6 @@ import log
 import re
 import sys
 
-import graphutil
 import util
 
 import circonusapi
@@ -39,12 +38,12 @@ class Module(object):
         pattern and {groupname} in the graph template.
         """
         try:
-            template = graphutil.Template(template_name)
+            template = util.GraphTemplate(template_name)
         except IOError:
             log.error("Unable to open template %s" % template_name)
             sys.exit(1)
-        checks, groups = self.find_checks(pattern)
-        self.verify_metrics(template, checks)
+        checks, groups = util.find_checks(self.api, pattern)
+        util.verify_metrics(self.api, template, checks)
         log.msg("About to add %s graphs for the following checks:" % (
             template_name))
         for c in checks:
@@ -53,51 +52,6 @@ class Module(object):
             log.msg("Not adding graphs.")
             sys.exit()
         self.add_graphs(template, checks, groups)
-
-    def find_checks(self, pattern):
-        log.msg("Retrieving matching checks")
-        all_checks = self.api.list_checks(active='true')
-        filtered_checks = []
-        groups = {}
-        for c in sorted(all_checks):
-            m = re.search(pattern, c['name'])
-            if m:
-                filtered_checks.append(c)
-                # Store numbered groups
-                matchgroups = m.groups()
-                groups[c['check_id']] = {}
-                for i in range(0, len(matchgroups)):
-                    groups[c['check_id']]["group%s" % (i+1)] = matchgroups[i]
-                # Store named groups - (?P<name>...)
-                groups[c['check_id']].update(m.groupdict())
-        return filtered_checks, groups
-
-    def verify_metrics(self, template, checks):
-        log.msg("Verifying that checks have the correct metrics")
-        template_metrics = template.get_metrics()
-        checks_with_wrong_metrics = []
-        count = 0
-        for c in checks:
-            count += 1
-            print "\r%s/%s" % (count, len(checks)),
-            sys.stdout.flush()
-            metrics = self.api.list_metrics(check_id=c['check_id'])
-            metric_name_types = [
-                {'name': m['name'], 'type': m['type']} for m in metrics]
-            for m in template_metrics:
-                if m not in metric_name_types:
-                    checks_with_wrong_metrics.append({
-                        'name': c['name'],
-                        'metric': m['name'],
-                        'type': m['type']})
-        if checks_with_wrong_metrics:
-            log.msg("The following checks do not have metrics specified in"
-                    " the template:")
-            for c in checks_with_wrong_metrics:
-                log.msg("%(name)s - %(metric)s (%(type)s)" % c)
-            log.error("Not adding graphs. The template does not match the"
-                      " checks")
-            sys.exit(1)
 
     def add_graphs(self, template, checks, groups):
         for c in checks:

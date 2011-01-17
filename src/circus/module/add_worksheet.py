@@ -7,7 +7,6 @@ import log
 import re
 import sys
 
-import graphutil
 import util
 
 import circonusapi

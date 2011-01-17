@@ -41,6 +41,20 @@ class Template(object):
         """Substitute parameters in the template"""
         return self._process(self.template, params)
 
+    def parse_nv_params(params):
+        """Parses a list of params in the form name=value into a dict
+        suitable for passing to Template.sub"""
+        template_params = {}
+        for param in params:
+            try:
+                name, value = param.split('=', 1)
+            except ValueError:
+                log.error("Invalid parameter: %s" % param)
+                log.error("Extra parameters must be specified as name=value")
+                sys.exit(1)
+            template_params[name] = value
+        return template_params
+
     def _process(self, i, params):
         if type(i) == dict:
             return self._process_dict(i, params)
@@ -65,3 +79,88 @@ class Template(object):
 
     def _process_str(self, s, params):
         return re.sub("{(\S+)}", lambda m: params[m.group(1)], s)
+
+class GraphTemplate(Template):
+    def __init__(self, name):
+        template_dir=os.path.join(
+            os.path.dirname(__file__), "templates", "graph")
+        super(GraphTemplate, self).__init__(name, template_dir)
+
+    def get_metrics(self):
+        """Returns a list of metrics specified in the graph template"""
+        return [{
+            'name': i['metric_name'],
+            'type': i['metric_type']
+        } for i in self.template['datapoints']]
+
+    def _process_str(self, s, params):
+        # Special case the check_id - make it an integer if it's the only
+        # thing present in the string
+        if s == "{check_id}":
+            return int(params['check_id'])
+        return super(GraphTemplate, self)._process_str(s, params)
+
+class RuleTemplate(Template):
+    def __init__(self, name):
+        template_dir=os.path.join(
+            os.path.dirname(__file__), "templates", "rules")
+        super(RuleTemplate, self).__init__(name, template_dir)
+
+    def get_metrics(self):
+        """Returns a list of metrics specified in the graph template"""
+        return [{
+            'name': i['metric_name'],
+            'type': i['metric_type']
+        } for i in self.template]
+
+    def _process_str(self, s, params):
+        # Special case the check_id - make it an integer if it's the only
+        # thing present in the string
+        if s == "{check_id}":
+            return int(params['check_id'])
+        return super(RuleTemplate, self)._process_str(s, params)
+
+def find_checks(api, pattern):
+    log.msg("Retrieving matching checks")
+    all_checks = api.list_checks(active='true')
+    filtered_checks = []
+    groups = {}
+    for c in sorted(all_checks):
+        m = re.search(pattern, c['name'])
+        if m:
+            filtered_checks.append(c)
+            # Store numbered groups
+            matchgroups = m.groups()
+            groups[c['check_id']] = {}
+            for i in range(0, len(matchgroups)):
+                groups[c['check_id']]["group%s" % (i+1)] = matchgroups[i]
+            # Store named groups - (?P<name>...)
+            groups[c['check_id']].update(m.groupdict())
+    return filtered_checks, groups
+
+def verify_metrics(api, template, checks):
+    log.msg("Verifying that checks have the correct metrics")
+    template_metrics = template.get_metrics()
+    checks_with_wrong_metrics = []
+    count = 0
+    for c in checks:
+        count += 1
+        print "\r%s/%s" % (count, len(checks)),
+        sys.stdout.flush()
+        metrics = api.list_metrics(check_id=c['check_id'])
+        metric_name_types = [
+            {'name': m['name'], 'type': m['type']} for m in metrics]
+        for m in template_metrics:
+            if m not in metric_name_types:
+                checks_with_wrong_metrics.append({
+                    'name': c['name'],
+                    'metric': m['name'],
+                    'type': m['type']})
+    if checks_with_wrong_metrics:
+        log.msg("The following checks do not have metrics specified in"
+                " the template:")
+        for c in checks_with_wrong_metrics:
+            log.msg("%(name)s - %(metric)s (%(type)s)" % c)
+        log.error("Not continuing. The template does not match the"
+                    " checks")
+        sys.exit(1)
