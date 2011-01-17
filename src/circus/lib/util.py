@@ -83,7 +83,7 @@ class Template(object):
 class GraphTemplate(Template):
     def __init__(self, name):
         template_dir=os.path.join(
-            os.path.dirname(__file__), "templates", "graph")
+            os.path.dirname(__file__), "..", "templates", "graph")
         super(GraphTemplate, self).__init__(name, template_dir)
 
     def get_metrics(self):
@@ -103,7 +103,7 @@ class GraphTemplate(Template):
 class RuleTemplate(Template):
     def __init__(self, name):
         template_dir=os.path.join(
-            os.path.dirname(__file__), "templates", "rules")
+            os.path.dirname(__file__), "..", "templates", "rules")
         super(RuleTemplate, self).__init__(name, template_dir)
 
     def get_metrics(self):
