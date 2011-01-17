@@ -41,7 +41,7 @@ class Template(object):
         """Substitute parameters in the template"""
         return self._process(self.template, params)
 
-    def parse_nv_params(params):
+    def parse_nv_params(self, params):
         """Parses a list of params in the form name=value into a dict
         suitable for passing to Template.sub"""
         template_params = {}
@@ -88,10 +88,7 @@ class GraphTemplate(Template):
 
     def get_metrics(self):
         """Returns a list of metrics specified in the graph template"""
-        return [{
-            'name': i['metric_name'],
-            'type': i['metric_type']
-        } for i in self.template['datapoints']]
+        return [i['metric_name'] for i in self.template['datapoints']]
 
     def _process_str(self, s, params):
         # Special case the check_id - make it an integer if it's the only
@@ -103,15 +100,12 @@ class GraphTemplate(Template):
 class RuleTemplate(Template):
     def __init__(self, name):
         template_dir=os.path.join(
-            os.path.dirname(__file__), "..", "templates", "rules")
+            os.path.dirname(__file__), "..", "templates", "rule")
         super(RuleTemplate, self).__init__(name, template_dir)
 
     def get_metrics(self):
         """Returns a list of metrics specified in the graph template"""
-        return [{
-            'name': i['metric_name'],
-            'type': i['metric_type']
-        } for i in self.template]
+        return [ i['metric_name'] for i in self.template]
 
     def _process_str(self, s, params):
         # Special case the check_id - make it an integer if it's the only
@@ -148,19 +142,18 @@ def verify_metrics(api, template, checks):
         print "\r%s/%s" % (count, len(checks)),
         sys.stdout.flush()
         metrics = api.list_metrics(check_id=c['check_id'])
-        metric_name_types = [
-            {'name': m['name'], 'type': m['type']} for m in metrics]
+        metric_names = [ m['name'] for m in metrics]
         for m in template_metrics:
-            if m not in metric_name_types:
+            if m not in metric_names:
                 checks_with_wrong_metrics.append({
                     'name': c['name'],
-                    'metric': m['name'],
-                    'type': m['type']})
+                    'metric': m['name']})
     if checks_with_wrong_metrics:
         log.msg("The following checks do not have metrics specified in"
                 " the template:")
         for c in checks_with_wrong_metrics:
-            log.msg("%(name)s - %(metric)s (%(type)s)" % c)
+            log.msg("%(name)s - %(metric)s" % c)
         log.error("Not continuing. The template does not match the"
                     " checks")
         sys.exit(1)
+    print

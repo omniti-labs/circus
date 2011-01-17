@@ -1,0 +1,50 @@
+Rule templates are JSON, like the other templates, and are a list of rules to
+apply. Each rule needs to contain the following items:
+
+    severity
+    check_id    -- should probably be set to "{check_id}" which will be
+                   replaced with the correct check ID.
+    criteria    -- What the rule matches on. Valid values are:
+                    Numeric:
+                        Max Value
+                        Min Value
+                        On Absence
+                    String:
+                        Match
+                        Does Not Match
+                        Contains
+                        Does Not Contain
+                        On Change
+                        On Absence
+
+    value       -- The value for the criteria. For 'On Change' or 'On Absence'
+                   criteria, this should be set to 'true'
+    metric_name -- The name of the metric for the rule
+    metric_type -- The type of the metric (TODO - this shouldn't be needed)
+    order       -- The order the rule should be applied in (number)
+    contact_group -- A list of contact groups for the rule.
+
+Example:
+
+[
+    {
+        "severity": 1,
+        "check_id": "{check_id}",
+        "value": "0.5",
+        "criteria": "Max Value",
+        "metric_type": "numeric",
+        "order": 1,
+        "metric_name": "average",
+        "contact_groups": ["On Call"]
+    },
+    {
+        "severity": 1,
+        "check_id": "{check_id}",
+        "value": true,
+        "criteria": "On Absence",
+        "metric_type": "numeric",
+        "order": 2,
+        "metric_name": "average",
+        "contact_groups": ["On Call", "Managers"]
+    }
+]
