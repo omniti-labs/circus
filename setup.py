@@ -10,6 +10,6 @@ setup (name="Circus",
        license="ISC",
        package_dir={'': 'src'},
        packages=['circus', 'circus.module'],
-       package_data={'circus': ['templates/*/*', 'data/*']},
+       package_data={'circus': ['templates/*/*', 'data/*', 'lib/*.py']},
        scripts=['scripts/circus']
 )
