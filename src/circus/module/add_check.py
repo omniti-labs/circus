@@ -43,14 +43,7 @@ class Module(object):
             'target': target,
             'targetip': targetip
         }
-        for param in params:
-            try:
-                name, value = param.split('=', 1)
-            except ValueError:
-                log.error("Invalid parameter: %s" % param)
-                log.error("Extra parameters must be specified as name=value")
-                sys.exit(1)
-            template_params[name] = value
+        template_params.update(template.parse_nv_params(params))
 
         substituted = template.sub(template_params)
         # Add required parameters
