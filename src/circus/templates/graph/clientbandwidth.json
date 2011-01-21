@@ -1,0 +1,115 @@
+{
+    "style": "area",
+    "title": "{group1} bandwidth",
+    "guides": [
+        {
+            "color": "#caac00",
+            "legend_formula": "",
+            "hidden": false,
+            "data_formula": "95%",
+            "name": "95th Percentile"
+        }
+    ],
+    "datapoints": [
+        {
+            "data_formula": "8,*",
+            "name": "out (puffer-va-5)",
+            "check_id": 2101,
+            "legend_formula": "auto,2,round",
+            "color": "#4a00dc",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`outoctets",
+            "hidden": false,
+            "stack": 1,
+            "axis": "l"
+        },
+        {
+            "data_formula": "8,*",
+            "name": "out (puffer-va-6)",
+            "check_id": 2102,
+            "legend_formula": "auto,2,round",
+            "color": "#4900db",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`outoctets",
+            "hidden": false,
+            "stack": 1,
+            "axis": "l"
+        },
+        {
+            "data_formula": "8,*",
+            "name": "out (digger-va-1)",
+            "check_id": 2851,
+            "legend_formula": "auto,2,round",
+            "color": "#4900db",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`outoctets",
+            "hidden": false,
+            "stack": 1,
+            "axis": "l"
+        },
+        {
+            "data_formula": "8,*",
+            "name": "out (digger-va-2)",
+            "check_id": 2852,
+            "legend_formula": "auto,2,round",
+            "color": "#4900db",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`outoctets",
+            "hidden": false,
+            "stack": 1,
+            "axis": "l"
+        },
+        {
+            "data_formula": "-8,*",
+            "name": "in (puffer-va-5)",
+            "check_id": 2101,
+            "legend_formula": "-1,*,auto,2,round",
+            "color": "#33aa33",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`inoctets",
+            "hidden": false,
+            "axis": "l"
+        },
+        {
+            "data_formula": "-8,*",
+            "name": "in (puffer-va-6)",
+            "check_id": 2102,
+            "legend_formula": "-1,*,auto,2,round",
+            "color": "#33ab33",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`inoctets",
+            "hidden": false,
+            "axis": "l"
+        },
+        {
+            "data_formula": "-8,*",
+            "name": "in (digger-va-1)",
+            "check_id": 2851,
+            "legend_formula": "-1,*,auto,2,round",
+            "color": "#33ab33",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`inoctets",
+            "hidden": false,
+            "axis": "l"
+        },
+        {
+            "data_formula": "-8,*",
+            "name": "in (digger-va-2)",
+            "check_id": 2852,
+            "legend_formula": "-1,*,auto,2,round",
+            "color": "#33ab33",
+            "derive": "counter",
+            "metric_type": "numeric",
+            "metric_name": "{group1}`inoctets",
+            "hidden": false,
+            "axis": "l"
+        }
+    ]
+}
