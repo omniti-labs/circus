@@ -1,4 +1,4 @@
-__cmdname__ = "add_graphs"
+__cmdname__ = "add_graph_bulk"
 
 import json
 import log
@@ -15,7 +15,7 @@ class Module(object):
         self.account = account
 
     def command(self, opts, template_name, pattern):
-        """Add graphs in bulk based on a template
+        """Add graphs for multiple checks in bulk based on a template
 
         Arguments:
             template_name   -- the name of the template file
