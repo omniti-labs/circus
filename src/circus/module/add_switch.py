@@ -69,7 +69,7 @@ class Module(object):
             stdout=subprocess.PIPE).communicate()[0]
         ports = {}
         for line in output.split("\n"):
-            m = re.match(r'[.0-9]+\.(\d+) = STRING: "(?:ethernet)?([0-9/]+)"',
+            m = re.match(r'[.0-9]+\.(\d+) = STRING: "?(?:ethernet)?([0-9/]+)"?',
                         line)
             if m:
                 ports[m.group(2)] = m.group(1)
