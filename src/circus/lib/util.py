@@ -34,8 +34,14 @@ def resolve_target(target):
 class Template(object):
     """Generic template class for json templates"""
     def __init__(self, name, template_dir):
-        with open(os.path.join(template_dir, "%s.json" % name)) as fh:
-            self.template = json.load(fh)
+        try:
+            # Try the current directory first
+            fh = open(name)
+        except OSError:
+            # Then try the template directory
+            fh = open(os.path.join(template_dir, "%s.json" % name))
+        self.template = json.load(fh)
+        fh.close()
 
     def sub(self, params):
         """Substitute parameters in the template"""
