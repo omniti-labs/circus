@@ -41,7 +41,7 @@ class Template(object):
         try:
             # Try the current directory first
             fh = open(name)
-        except OSError:
+        except IOError:
             # Then try the template directory
             fh = open(os.path.join(template_dir, "%s.json" % name))
         self.template = json.load(fh)
