@@ -3,9 +3,11 @@ __cmdopts__ = ''
 
 import collections
 
+
 class recursivedefaultdict(collections.defaultdict):
     def __init__(self):
         self.default_factory = type(self)
+
 
 class Module(object):
     def __init__(self, api, account):
@@ -38,7 +40,7 @@ class Module(object):
                 for m in rv:
                     metrics[i]["%s`%s" % (m['check_id'], m['name'])] = m
 
-        s = [] # Sets to compare
+        s = []  # Sets to compare
         # Mapping from metric name/type/agent to check name
         check_names = recursivedefaultdict()
         for i in range(0, len(ips)):
@@ -51,7 +53,7 @@ class Module(object):
                     check_names[c['agent']][c['type']][m['name']] = c['name']
             s.append(set(tmp))
 
-        missing = [ s[0] - s[1], s[1] - s[0]]
+        missing = [s[0] - s[1], s[1] - s[0]]
 
         if missing[0]:
             print "Metrics present on %s but not on %s:" % (host1, host2)

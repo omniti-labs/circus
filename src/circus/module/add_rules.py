@@ -8,6 +8,7 @@ import circonusapi
 import log
 import util
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -21,7 +22,7 @@ class Module(object):
             pattern         -- regex to match check names on
             params          -- other parameters (see below)
 
-        Other parameters are specified as "param_name=value" and will 
+        Other parameters are specified as "param_name=value" and will
         be substituted in the template. Use {param_name} in the template.
 
         Some predefined parameters:
@@ -50,8 +51,7 @@ class Module(object):
                 "check_name":   c['name'],
                 "check_id":     c['check_id'],
                 "check_target": c['target'],
-                "check_agent":  c['agent']
-            }
+                "check_agent":  c['agent']}
             p.update(template_params)
             p.update(groups[c['check_id']])
             substituted = template.sub(p)
@@ -64,8 +64,8 @@ class Module(object):
                 contact_group_ids = {}
                 for i in rv:
                     contact_group_ids[i['name']] = i['contact_group_id']
-                contact_groups = [ contact_group_ids[cg] for cg in
-                                contact_group_names ]
+                contact_groups = [contact_group_ids[cg] for cg in
+                                contact_group_names]
 
                 log.msgnb("Adding rule for %s... " % c['name'])
                 try:
@@ -75,8 +75,7 @@ class Module(object):
                             'contact_group_id': cg,
                             'check_id': rule['check_id'],
                             'metric_name': rule['metric_name'],
-                            'severity': rule['severity']
-                        }
+                            'severity': rule['severity']}
                         rv = self.api.add_rule_contact_group(**cg_param)
                     log.msgnf("Success")
                 except circonusapi.CirconusAPIError, e:

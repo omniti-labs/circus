@@ -4,6 +4,7 @@ __cmdopts__ = 'e'
 
 import log
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -26,7 +27,7 @@ class Module(object):
         if not check:
             log.error("Check %s not found\n" % check_id)
             return
-        rv = self.api.list_metrics(check_id = check_id)
+        rv = self.api.list_metrics(check_id=check_id)
         to_enable = []
         already_enabled = []
         print "Disabled Metric List for check %s (%s)" % (
@@ -45,4 +46,4 @@ class Module(object):
             # Enable metrics here
             self.api.edit_check_bundle(
                 bundle_id=check['bundle_id'],
-                metric_name = already_enabled + to_enable)
+                metric_name=already_enabled + to_enable)

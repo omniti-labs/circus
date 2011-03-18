@@ -4,6 +4,7 @@ __cmdopts__ = 'lar'
 import re
 import json
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api

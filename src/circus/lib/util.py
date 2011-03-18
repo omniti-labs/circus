@@ -6,6 +6,7 @@ import re
 import json
 import socket
 
+
 def confirm(text="OK to continue?"):
     response = None
     while response not in ['Y', 'y', 'N', 'n']:
@@ -13,6 +14,7 @@ def confirm(text="OK to continue?"):
     if response in ['Y', 'y']:
         return True
     return False
+
 
 def get_agent(api, agent_name):
     rv = api.list_agents()
@@ -26,10 +28,12 @@ def get_agent(api, agent_name):
             log.msgnf("    %s" % a)
         sys.exit(1)
 
+
 def resolve_target(target):
     """Resolves a target name into an IP. Allows specifying targets by name
     on the command line."""
     return socket.gethostbyname(target)
+
 
 class Template(object):
     """Generic template class for json templates"""
@@ -86,9 +90,10 @@ class Template(object):
     def _process_str(self, s, params):
         return re.sub("{(\S+)}", lambda m: params[m.group(1)], s)
 
+
 class GraphTemplate(Template):
     def __init__(self, name):
-        template_dir=os.path.join(
+        template_dir = os.path.join(
             os.path.dirname(__file__), "..", "templates", "graph")
         super(GraphTemplate, self).__init__(name, template_dir)
 
@@ -103,15 +108,16 @@ class GraphTemplate(Template):
             return int(params['check_id'])
         return super(GraphTemplate, self)._process_str(s, params)
 
+
 class RuleTemplate(Template):
     def __init__(self, name):
-        template_dir=os.path.join(
+        template_dir = os.path.join(
             os.path.dirname(__file__), "..", "templates", "rule")
         super(RuleTemplate, self).__init__(name, template_dir)
 
     def get_metrics(self):
         """Returns a list of metrics specified in the graph template"""
-        return [ i['metric_name'] for i in self.template]
+        return [i['metric_name'] for i in self.template]
 
     def _process_str(self, s, params):
         # Special case the check_id - make it an integer if it's the only
@@ -119,6 +125,7 @@ class RuleTemplate(Template):
         if s == "{check_id}":
             return int(params['check_id'])
         return super(RuleTemplate, self)._process_str(s, params)
+
 
 def find_checks(api, pattern):
     log.msg("Retrieving matching checks")
@@ -133,10 +140,11 @@ def find_checks(api, pattern):
             matchgroups = m.groups()
             groups[c['check_id']] = {}
             for i in range(0, len(matchgroups)):
-                groups[c['check_id']]["group%s" % (i+1)] = matchgroups[i]
+                groups[c['check_id']]["group%s" % (i + 1)] = matchgroups[i]
             # Store named groups - (?P<name>...)
             groups[c['check_id']].update(m.groupdict())
     return filtered_checks, groups
+
 
 def verify_metrics(api, template, checks):
     log.msg("Verifying that checks have the correct metrics")
@@ -148,7 +156,7 @@ def verify_metrics(api, template, checks):
         print "\r%s/%s" % (count, len(checks)),
         sys.stdout.flush()
         metrics = api.list_metrics(check_id=c['check_id'])
-        metric_names = [ m['name'] for m in metrics]
+        metric_names = [m['name'] for m in metrics]
         for m in template_metrics:
             if m not in metric_names:
                 checks_with_wrong_metrics.append({

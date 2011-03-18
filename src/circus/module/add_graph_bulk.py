@@ -9,6 +9,7 @@ import util
 
 import circonusapi
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -59,13 +60,12 @@ class Module(object):
                 "check_name":   c['name'],
                 "check_id":     c['check_id'],
                 "check_target": c['target'],
-                "check_agent":  c['agent']
-            }
+                "check_agent":  c['agent']}
             params.update(groups[c['check_id']])
             graph_data = template.sub(params)
             log.msgnb("Adding graph: %s..." % graph_data['title'])
             try:
-                rv = self.api.add_graph(graph_data = json.dumps(graph_data))
+                rv = self.api.add_graph(graph_data=json.dumps(graph_data))
                 log.msgnf("Success")
             except circonusapi.CirconusAPIError, e:
                 log.msgnf("Failed")

@@ -7,6 +7,7 @@ import log
 import sys
 import uuid
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api

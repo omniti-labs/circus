@@ -11,6 +11,7 @@ import util
 
 import circonusapi
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -27,7 +28,7 @@ class Module(object):
         """
         rv = self.api.list_graphs()
         filtered_graphs = []
-        for g in sorted(rv, lambda a,b: cmp(a['title'], b['title'])):
+        for g in sorted(rv, lambda a, b: cmp(a['title'], b['title'])):
             if re.search(pattern, g['title']):
                 filtered_graphs.append(g)
         favorite = False
@@ -36,8 +37,7 @@ class Module(object):
         worksheet_data = {
             'title': title,
             'favorite': favorite,
-            'graphs' : filtered_graphs
-        }
+            'graphs': filtered_graphs}
         log.msg("Adding a worksheet with the following graphs:")
         for i in filtered_graphs:
             log.msg("    %s" % i['title'])

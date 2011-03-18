@@ -2,6 +2,7 @@ __cmdname__ = 'cli'
 
 import code
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -18,4 +19,3 @@ class Module(object):
         banner = "Circus interpreter (python cli)\n" \
                 "use self.api to access the circonus api"
         code.interact(banner=banner, local=locals())
-

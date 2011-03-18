@@ -2,6 +2,7 @@ import json
 import urllib
 import urllib2
 
+
 class CirconusAPI(object):
 
     def __init__(self, token):
@@ -12,163 +13,128 @@ class CirconusAPI(object):
         self.methods = {
             ### Check management
             'list_agents': {
-                'form_method': 'GET'
-            },
+                'form_method': 'GET'},
             'list_checks': {
                 'form_method': 'GET',
-                'optional': ['active']
-            },
+                'optional': ['active']},
             'list_metrics': {
                 'form_method': 'GET',
-                'required': ['check_id']
-            },
+                'required': ['check_id']},
             'add_check_bundle': {
                 'form_method': 'POST',
                 'required': ['agent_id', 'target', 'metric_name'],
-                'optional': ['module', 'period', 'timeout','*']
-            },
+                'optional': ['module', 'period', 'timeout', '*']},
             'edit_check_bundle': {
                 'form_method': 'POST',
                 'required': ['bundle_id', 'metric_name'],
-                'optional': ['*']
-            },
+                'optional': ['*']},
             'enable_check_bundle': {
                 'form_method': 'POST',
-                'required': ['bundle_id']
-            },
+                'required': ['bundle_id']},
             'disable_check_bundle': {
                 'form_method': 'POST',
-                'required': ['bundle_id']
-            },
+                'required': ['bundle_id']},
             'enable_check': {
                 'form_method': 'POST',
-                'required': ['check_id']
-            },
+                'required': ['check_id']},
             'disable_check': {
                 'form_method': 'POST',
-                'required': ['check_id']
-            },
+                'required': ['check_id']},
             ### Account management
             'list_accounts': {
-                'form_method': 'POST'
-            },
+                'form_method': 'POST'},
             'list_users': {
                 'form_method': 'GET',
-                'required': ['check_id', 'metric_name']
-            },
+                'required': ['check_id', 'metric_name']},
             'list_contact_groups': {
-                'form_method': 'GET'
-            },
+                'form_method': 'GET'},
             'add_contact_group': {
                 'form_method': 'POST',
                 'required': ['name'],
-                'optional': ['agg_window']
-            },
+                'optional': ['agg_window']},
             'edit_contact_group': {
                 'form_method': 'POST',
                 'required': ['contact_group_id'],
-                'optional': ['name', 'agg_window']
-            },
+                'optional': ['name', 'agg_window']},
             'remove_contact_group': {
                 'form_method': 'POST',
-                'required': ['contact_group_id']
-            },
+                'required': ['contact_group_id']},
             'add_contact': {
                 'form_method': 'POST',
-                'required' : ['contact_group_id', 'contact_method'],
-                'optional' : ['user_id', 'contact_info']
-            },
+                'required': ['contact_group_id', 'contact_method'],
+                'optional': ['user_id', 'contact_info']},
             'remove_contact': {
                 'form_method': 'POST',
                 'required': ['contact_group_id'],
-                'optional': ['user_id', 'id', 'contact_method']
-            },
+                'optional': ['user_id', 'id', 'contact_method']},
             ### Rule management
             'list_alerts': {
                 'form_method': 'GET',
-                'required': ['start', 'end']
-            },
+                'required': ['start', 'end']},
             'list_rules': {
                 'form_method': 'GET',
-                'optional': ['check_id', 'metric_name']
-            },
+                'optional': ['check_id', 'metric_name']},
             'add_metric_rule': {
                 'form_method': 'POST',
                 'required': ['check_id', 'metric_name', 'order', 'severity',
-                             'value', 'criteria']
-            },
+                             'value', 'criteria']},
             'remove_metric_rule': {
                 'form_method': 'POST',
-                'required' : ['check_id', 'metric_name', 'order']
-            },
+                'required': ['check_id', 'metric_name', 'order']},
             'add_metric_parent': {
                 'form_method': 'POST',
-                'required' : ['check_id', 'parent_check_id', 'metric_name',
-                              'parent_metric_name']
-            },
+                'required': ['check_id', 'parent_check_id', 'metric_name',
+                              'parent_metric_name']},
             'remove_metric_parent': {
                 'form_method': 'POST',
-                'required': ['check_id', 'metric_name']
-            },
+                'required': ['check_id', 'metric_name']},
             'add_rule_contact_group': {
                 'form_method': 'POST',
                 'required': ['contact_group_id', 'check_id', 'metric_name',
-                             'severity']
-            },
+                             'severity']},
             'remove_rule_contact_group': {
                 'form_method': 'POST',
                 'required': ['contact_group_id', 'check_id', 'metric_name',
-                             'severity']
-            },
+                             'severity']},
             ### Graph management
             'get_graph': {
                 'api_method': 'graph',
                 'form_method': 'GET',
-                'required': ['graph_id']
-            },
+                'required': ['graph_id']},
             'add_graph': {
                 'api_method': 'graph',
                 'form_method': 'POST',
-                'required': ['graph_data']
-            },
+                'required': ['graph_data']},
             'edit_graph': {
                 'api_method': 'graph',
                 'form_method': 'POST',
-                'required': ['graph_id', 'graph_data']
-            },
+                'required': ['graph_id', 'graph_data']},
             'remove_graph': {
                 'form_method': 'POST',
-                'required': ['graph_id']
-            },
+                'required': ['graph_id']},
             'list_graphs': {
-                'form_method': 'GET'
-            },
+                'form_method': 'GET'},
             'get_worksheet': {
                 'api_method': 'worksheet',
                 'form_method': 'GET',
-                'required': ['worksheet_id']
-            },
+                'required': ['worksheet_id']},
             'add_worksheet': {
                 'api_method': 'worksheet',
                 'form_method': 'POST',
-                'required': ['worksheet_data']
-            },
+                'required': ['worksheet_data']},
             'edit_worksheet': {
                 'api_method': 'worksheet',
                 'form_method': 'POST',
-                'required': ['worksheet_id', 'worksheet_data']
-            },
+                'required': ['worksheet_id', 'worksheet_data']},
             'remove_worksheet': {
                 'form_method': 'POST',
-                'required': ['worksheet_id']
-            },
+                'required': ['worksheet_id']},
             'list_worksheets': {
-                'form_method': 'GET'
-            }
-        }
+                'form_method': 'GET'}}
 
     def __getattr__(self, name):
         if name in self.methods:
+
             def f(**parameters):
                 # Verify that we passed the right parameters
                 required = set(self.methods[name].get('required', []))
@@ -207,7 +173,7 @@ class CirconusAPI(object):
             demunged_k = k.replace('_dot_', '.')
             if type(parameters[k]) == list:
                 for v in parameters[k]:
-                    plist.append((demunged_k,v))
+                    plist.append((demunged_k, v))
             else:
                 plist.append((demunged_k, parameters[k]))
         url = "https://%s/api/json/%s" % (self.hostname, method)
@@ -216,13 +182,10 @@ class CirconusAPI(object):
         elif form_method == 'GET':
             data = None
             url = "%s?%s" % (url, urllib.urlencode(plist))
-        req = urllib2.Request(
-            url = url, data = data,
-            headers = {
-                "X-Circonus-Auth-Token" : self.token,
-                "X-Circonus-App-Name" : "Circus"
-            }
-        )
+        req = urllib2.Request(url=url, data=data,
+            headers={
+                "X-Circonus-Auth-Token": self.token,
+                "X-Circonus-App-Name": "Circus"})
         try:
             fh = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
@@ -243,14 +206,18 @@ class CirconusAPI(object):
         fh.close()
         return response
 
+
 class CirconusAPIException(Exception):
     pass
+
 
 class TokenNotValidated(CirconusAPIException):
     pass
 
+
 class AccessDenied(CirconusAPIException):
     pass
+
 
 class CirconusAPIError(CirconusAPIException):
     """Exception class for any errors thrown by the circonus API.

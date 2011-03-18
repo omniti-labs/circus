@@ -9,6 +9,7 @@ import util
 
 import circonusapi
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -24,7 +25,7 @@ class Module(object):
         The templates are in json, and is in the same format as the output of
         the dump_graph command.
 
-        Other parameters are specified as "param_name=value" and will 
+        Other parameters are specified as "param_name=value" and will
         be substituted in the template. Use {param_name} in the template.
         """
         try:
@@ -36,7 +37,7 @@ class Module(object):
         graph_data = template.sub(template_params)
         log.msgnb("Adding graph: %s..." % graph_data['title'])
         try:
-            rv = self.api.add_graph(graph_data = json.dumps(graph_data))
+            rv = self.api.add_graph(graph_data=json.dumps(graph_data))
             log.msgnf("Success")
         except circonusapi.CirconusAPIError, e:
             log.msgnf("Failed")

@@ -2,6 +2,7 @@
 __cmdname__ = 'list_accounts'
 __cmdopts__ = 'l'
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api

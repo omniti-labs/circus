@@ -2,6 +2,7 @@ import inspect
 import sys
 import getopt
 
+
 class CmdParse(object):
     def __init__(self, options=None):
         self.cmd_map = {}
@@ -12,9 +13,9 @@ class CmdParse(object):
 
     def parse_options(self):
         options = {}
-        shortopts = [] # List of short options (passed to getopt)
-        longopts = [] # List of long options (passed to getopt)
-        optmap = {} # Mapping of option strings to varnames
+        shortopts = []  # List of short options (passed to getopt)
+        longopts = []   # List of long options (passed to getopt)
+        optmap = {}     # Mapping of option strings to varnames
         for opt in self.options:
             vals = self.options[opt]
             options[opt] = vals['default']
@@ -133,13 +134,13 @@ class CmdParse(object):
             optargs.append("%s..." % argspec[1])
         if args[0] == 'self':
             args = args[1:]
-        args = args[1:] # Strip off the mandatory opts argument
+        args = args[1:]     # Strip off the mandatory opts argument
         optstr = ""
         if self.cmd_map[cmd]['opts'] or self.cmd_map[cmd]['longopts']:
             optstr = " [OPTIONS]..."
         print "usage: %s %s%s %s %s" % (self.scriptname, cmd, optstr,
-            ' '.join([ '%s' % arg.upper() for arg in args ]),
-            ' '.join([ '[%s]' % arg.upper() for arg in optargs]))
+            ' '.join(['%s' % arg.upper() for arg in args]),
+            ' '.join(['[%s]' % arg.upper() for arg in optargs]))
 
     def add(self, cmd, callback, description="", opts="", longopts=[]):
         """Add a command to the list of commands.
@@ -157,8 +158,7 @@ class CmdParse(object):
             'callback': callback,
             'description': description,
             'opts': opts,
-            'longopts': longopts
-        }
+            'longopts': longopts}
 
     def addopt(self, shortopt, var, longopt=None, doc="", takesparam=False,
                default=None):
@@ -182,8 +182,7 @@ class CmdParse(object):
             'long': longopt,
             'doc': doc,
             'takesparam': takesparam,
-            'default': default
-        }
+            'default': default}
 
     def help(self, opts, command=None):
         """Provides help for a command"""

@@ -11,6 +11,7 @@ import circonusapi
 import cmdparse
 import log
 
+
 class CirconusClient(object):
     def __init__(self):
         self.cmdparser = cmdparse.CmdParse()
@@ -25,7 +26,6 @@ class CirconusClient(object):
                               doc="Specify which circonus account to use",
                               takesparam=True, default=None)
 
-
         self.options = self.cmdparser.parse_options()
         self.init_logger(self.options['debug'])
         self.config = self.load_config(self.options['conffile'])
@@ -36,7 +36,7 @@ class CirconusClient(object):
 
     def load_modules(self):
         tmp = [os.path.splitext(i) for i in os.listdir(
-            os.path.join(os.path.dirname(__file__), "module")) ]
+            os.path.join(os.path.dirname(__file__), "module"))]
         module_list = [i[0] for i in tmp
                        if i[1] == '.py' and i[0] != '__init__']
 

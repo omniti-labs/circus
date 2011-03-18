@@ -8,6 +8,7 @@ import circonusapi
 import log
 import util
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -23,7 +24,7 @@ class Module(object):
             agent           -- the agent to run the check from
             params          -- other parameters (see below)
 
-        Other parameters are specified as "param_name=value" and will 
+        Other parameters are specified as "param_name=value" and will
         be substituted in the template. Use {param_name} in the template.
 
         Some predefined parameters:
@@ -34,15 +35,14 @@ class Module(object):
                                (may be same as target if target was provided
                                 as an IP)
         """
-        template_dir=os.path.join(os.path.dirname(__file__),
+        template_dir = os.path.join(os.path.dirname(__file__),
                                   "..", "templates", "check")
         template = util.Template(template_name, template_dir)
         targetip = util.resolve_target(target)
         template_params = {
             'agent': agent,
             'target': target,
-            'targetip': targetip
-        }
+            'targetip': targetip}
         template_params.update(template.parse_nv_params(params))
 
         substituted = template.sub(template_params)

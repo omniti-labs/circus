@@ -6,6 +6,7 @@ import json
 import circonusapi
 import log
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api

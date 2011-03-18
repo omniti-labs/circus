@@ -11,24 +11,24 @@ else:
 # Ansi color lists
 cesc = '\033[%d;%dm'
 colors = {
-    'normal'    : '\033[0m',
-    'black'     : cesc % (0,30),
-    'red'       : cesc % (0,31),
-    'green'     : cesc % (0,32),
-    'yellow'    : cesc % (0,33),
-    'blue'      : cesc % (0,34),
-    'magenta'   : cesc % (0,35),
-    'cyan'      : cesc % (0,36),
-    'white'     : cesc % (0,37),
-    'bblack'    : cesc % (1,30),
-    'bred'      : cesc % (1,31),
-    'bgreen'    : cesc % (1,32),
-    'byellow'   : cesc % (1,33),
-    'bblue'     : cesc % (1,34),
-    'bmagenta'  : cesc % (1,35),
-    'bcyan'     : cesc % (1,36),
-    'bwhite'    : cesc % (1,37)
-}
+    'normal':     '\033[0m',
+    'black':      cesc % (0, 30),
+    'red':        cesc % (0, 31),
+    'green':      cesc % (0, 32),
+    'yellow':     cesc % (0, 33),
+    'blue':       cesc % (0, 34),
+    'magenta':    cesc % (0, 35),
+    'cyan':       cesc % (0, 36),
+    'white':      cesc % (0, 37),
+    'bblack':     cesc % (1, 30),
+    'bred':       cesc % (1, 31),
+    'bgreen':     cesc % (1, 32),
+    'byellow':    cesc % (1, 33),
+    'bblue':      cesc % (1, 34),
+    'bmagenta':   cesc % (1, 35),
+    'bcyan':      cesc % (1, 36),
+    'bwhite':     cesc % (1, 37)}
+
 
 def colorformat(s, color):
     if color_enabled:
@@ -36,20 +36,25 @@ def colorformat(s, color):
     else:
         return " * %s" % s
 
+
 def msg(s):
     print colorformat(s, 'bgreen')
+
 
 def debug(s):
     if debug_enabled:
         print colorformat(s, 'bcyan')
 
+
 def error(s):
     print colorformat("ERROR: %s" % s, 'bred')
+
 
 def msgnb(s):
     """Emits a message with no line break"""
     sys.stdout.write(colorformat(s, 'bgreen'))
     sys.stdout.flush()
+
 
 def msgnf(s):
     """Emits a message without any formatting.

@@ -8,6 +8,7 @@ import circonusapi
 import util
 import log
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -35,7 +36,7 @@ class Module(object):
         bundles = {}
         for check in sorted(rv):
             if re.search(pattern, check['name']):
-                if not bundles.has_key(check['bundle_id']):
+                if not check['bundle_id'] in bundles:
                     filtered_checks.append(check)
                     bundles[check['bundle_id']] = True
         renames = {}
@@ -51,8 +52,7 @@ class Module(object):
                 params = {
                     'bundle_id': c['bundle_id'],
                     'metric_name': metrics,
-                    'display_name_%s' % c['target']: renames[c['name']]
-                }
+                    'display_name_%s' % c['target']: renames[c['name']]}
                 try:
                     rv = self.api.edit_check_bundle(**params)
                     log.msgnf("Success")

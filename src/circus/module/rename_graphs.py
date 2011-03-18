@@ -8,6 +8,7 @@ import circonusapi
 import log
 import util
 
+
 class Module(object):
     def __init__(self, api, account):
         self.api = api
@@ -25,7 +26,7 @@ class Module(object):
         """
         rv = self.api.list_graphs()
         filtered_graphs = []
-        for g in sorted(rv, lambda a,b: cmp(a['title'], b['title'])):
+        for g in sorted(rv, lambda a, b: cmp(a['title'], b['title'])):
             if re.search(pattern, g['title']):
                 filtered_graphs.append(g)
         renames = {}

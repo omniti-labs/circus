@@ -9,6 +9,7 @@ import sys
 import circonusapi
 import util
 
+
 class Module(object):
     def __init__(self, api, account):
         # OID prefixes
@@ -16,14 +17,13 @@ class Module(object):
         prefix_2 = ".1.3.6.1.2.1.31.1.1.1"
 
         self.metrics = {
-            'status':       "%s.8"  % prefix_1,
+            'status':       "%s.8" % prefix_1,
             'name':         "%s.18" % prefix_2,
-            'speed':        "%s.5"  % prefix_1,
-            'in_octets':    "%s.6"  % prefix_2, # 64-bit version
-            'out_octets':   "%s.10" % prefix_2, # 64-bit counter
+            'speed':        "%s.5" % prefix_1,
+            'in_octets':    "%s.6" % prefix_2,  # 64-bit version
+            'out_octets':   "%s.10" % prefix_2,  # 64-bit counter
             'in_errors':    "%s.14" % prefix_1,
-            'out_errors':   "%s.20" % prefix_1
-        }
+            'out_errors':   "%s.20" % prefix_1}
         self.port_name_prefix = "%s.1" % prefix_2
         self.api = api
         self.account = account
@@ -69,8 +69,8 @@ class Module(object):
             stdout=subprocess.PIPE).communicate()[0]
         ports = {}
         for line in output.split("\n"):
-            m = re.match(r'[.0-9]+\.(\d+) = STRING: "?(?:ethernet)?([0-9/]+)"?',
-                        line)
+            m = re.match(
+                r'[.0-9]+\.(\d+) = STRING: "?(?:ethernet)?([0-9/]+)"?', line)
             if m:
                 ports[m.group(2)] = m.group(1)
         return ports
@@ -81,14 +81,13 @@ class Module(object):
             metric_names = []
             params = {
                     'account': self.account,
-                    'agent_id' : self.agent,
-                    'target' : self.target,
-                    'module' : "snmp",
-                    'display_name_%s' % self.target :
+                    'agent_id': self.agent,
+                    'target': self.target,
+                    'module': "snmp",
+                    'display_name_%s' % self.target:
                         "%s port %s interface stats" % (
                             self.friendly_name, name),
-                    'community' : self.community,
-            }
+                    'community': self.community}
             for k in self.metrics:
                 metric_names.append(k)
                 params["oid_%s" % k] = "%s.%s" % (self.metrics[k], idx)
