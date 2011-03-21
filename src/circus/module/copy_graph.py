@@ -25,14 +25,19 @@ class Module(object):
         Arguments:
             graph_id        -- The UUID of the graph you want to copy
             new_title       -- The title of the new graph
-            params          -- Old -> New check_id mapping
+            params          -- Search/replace on datapoint values
 
-        Check_id mapping should be of the form oldid=newid. For example:
-        1234=2345.
+        The search/replace parameters will replace any datapoint values,
+        including the check_id, metric_name, colors, and datapoint names.
+        Parameters should be of the form:
 
-        You can also specify a check_id mapping as a single number without an
-        equals sign. In this case, all other check ids that aren't part of the
-        mapping will be changed to this value.
+        search_term=replacement
+
+        For example, to modify the check id, you can do 1234=2345
+
+        You can also specify a single number without an equals sign. In this
+        case, all check ids that aren't replaced with another pattern will be
+        set to this value.
 
         If you have a graph that is only for a single check, then specifying
         the check id mapping as a single number is what you want.
@@ -48,24 +53,39 @@ class Module(object):
         # Set the new title
         graph_data['title'] = new_title
 
-        check_id_mapping = {}
+        subs = {}
         default_check_id = None
         for p in params:
             try:
-                parts = [int(i) for i in p.split('=', 1)]
+                # First try to parse as a single check id
+                default_check_id = int(p)
+                continue
             except ValueError:
-                log.error("Invalid check_id mapping: %s" % p)
-                sys.exit(1)
+                pass
+            parts = [i for i in p.split('=', 1)]
             try:
-                check_id_mapping[parts[0]] = parts[1]
+                subs[parts[0]] = parts[1]
             except IndexError:
-                default_check_id = parts[0]
+                log.error("Invalid substitution: %s" % p)
+                sys.exit(1)
 
         for d in graph_data['datapoints']:
-            if d['check_id'] in check_id_mapping:
-                d['check_id'] = check_id_mapping[d['check_id']]
-            elif default_check_id:
-                d['check_id'] = default_check_id
+            for k in d:
+                if type(d[k]) == str or type(d[k]) == unicode:
+                    # String search/replace
+                    for s in subs:
+                        d[k] = d[k].replace(s, subs[s])
+                        print d[k], s, subs[s]
+                elif type(d[k]) == int:
+                    # Integer replacement (matches only on the whole number)
+                    # Used for check_ids
+                    if str(d[k]) in subs:
+                        d[k] = int(subs[str(d[k])])
+                    elif k == 'check_id' and default_check_id:
+                        # If we didn't do a substitution previously, and we're
+                        # considering a check_id, replace the check_id with
+                        # the default
+                        d[k] = default_check_id
 
         if ('-v', '') in opts:
             print json.dumps(graph_data, indent=4)
