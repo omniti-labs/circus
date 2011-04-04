@@ -8,13 +8,13 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 
 import circonusapi
-import cmdparse
+import cmdparser
 import log
 
 
 class CirconusClient(object):
     def __init__(self):
-        self.cmdparser = cmdparse.CmdParse()
+        self.cmdparser = cmdparser.Parser(interactive=True, scriptname='circus')
         self.cmdparser.addopt(shortopt="d", longopt="debug",
                               var="debug", doc="Enable Debug Mode",
                               takesparam=False, default=False)
