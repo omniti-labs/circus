@@ -1,4 +1,4 @@
-__cmdname__ = 'cli'
+__cmdname__ = 'pycli'
 
 import code
 
@@ -11,7 +11,8 @@ class Module(object):
     def command(self, opts):
         """Start a python CLI with access to the Circonus API.
 
-        This allows you to run api commands interactively. Access the api with
+        This is mostly useful for debugging or when developing new modules,
+        and allows you to run api commands interactively. Access the api with
         self.api. For example: self.api.list_checks(active='active').
 
         Look at the circonusapi module for information on accessing the API.
