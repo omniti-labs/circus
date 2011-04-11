@@ -1,0 +1,50 @@
+{
+    "style": "line",
+    "title": "{group1} pf states",
+    "datapoints": [
+        {
+            "derive": false,
+            "metric_name": "Core::Pf::Status`local`state_entries",
+            "color": "#33aa33",
+            "legend_formula": "0,round",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} pf current state entries"
+        },
+        {
+            "derive": "counter",
+            "metric_name": "Core::Pf::Status`local`state_searches",
+            "color": "#3377cc",
+            "legend_formula": "1,round",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} pf state searches/sec"
+        },
+        {
+            "derive": "counter",
+            "metric_name": "Core::Pf::Status`local`state_inserts",
+            "color": "#4a00dc",
+            "legend_formula": "1,round",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} pf state inserts/sec"
+        },
+        {
+            "derive": "counter",
+            "metric_name": "Core::Pf::Status`local`state_removals",
+            "color": "#caac00",
+            "legend_formula": "1,round",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} pf state removals/sec"
+        }
+    ]
+}
