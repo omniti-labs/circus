@@ -1,0 +1,17 @@
+{
+    "style": "area",
+    "title": "{group1} freemem",
+    "datapoints": [
+        {
+            "data_formula": "1024,*",
+            "name": "{group1} Free Memory",
+            "check_id": "{check_id}",
+            "color": "#33aa33",
+            "derive": false,
+            "metric_type": "numeric",
+            "metric_name": "Core::Memstat`local`free_mem",
+            "hidden": false,
+            "axis": "l"
+        }
+    ]
+}

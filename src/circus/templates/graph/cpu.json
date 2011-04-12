@@ -1,0 +1,17 @@
+{
+    "style": "area",
+    "title": "{group1} CPU usage (busy)",
+    "datapoints": [
+        {
+            "data_formula": "-1,*,100,+",
+            "name": "{group1} CPU usage",
+            "check_id": "{check_id}",
+            "color": "#33aa33",
+            "derive": false,
+            "metric_type": "numeric",
+            "metric_name": "Core::Cpu`local`idle",
+            "hidden": false,
+            "axis": "l"
+        }
+    ]
+}

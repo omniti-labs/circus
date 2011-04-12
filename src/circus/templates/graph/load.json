@@ -1,0 +1,16 @@
+{
+    "style": "area",
+    "title": "{group1} load",
+    "datapoints": [
+        {
+            "derive": false,
+            "metric_name": "Core::Load`local`1m",
+            "color": "#33aa33",
+            "check_id": "{check_id}",
+            "metric_type": "numeric",
+            "hidden": false,
+            "axis": "l",
+            "name": "{group1} 1m Load Average"
+        }
+    ]
+}
