@@ -161,7 +161,7 @@ def verify_metrics(api, template, checks):
             if m not in metric_names:
                 checks_with_wrong_metrics.append({
                     'name': c['name'],
-                    'metric': m['name']})
+                    'metric': m})
     if checks_with_wrong_metrics:
         log.msg("The following checks do not have metrics specified in"
                 " the template:")
