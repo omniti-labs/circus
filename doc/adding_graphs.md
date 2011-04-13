@@ -190,11 +190,108 @@ The check returns metrics like the following:
     Core::Pf::Labels`web`bytes_out
     Core::Pf::Labels`mail`bytes_in
     Core::Pf::Labels`mail`bytes_out
+    Core::Pf::Labels`foo`bytes_in
+    Core::Pf::Labels`foo`bytes_out
+    Core::Pf::Labels`bar`bytes_in
+    Core::Pf::Labels`bar`bytes_out
 
-(where web and mail are labels in PF that reflect traffic going through the
-web and mail servers respectively).
+Where web, mail, foo, bar are labels in PF. All of these are in a single
+check, in this example the check_id is 1234.
 
-TODO
+First, create the graph for one of these labels (with bytes_in/bytes_out)
+manually in the web interface and export it using the dump_graph command:
+
+    circus dump_graph 12345678-9abc-def0-1234-56789abcdef0 > example.json
+
+It will look something like:
+
+    {
+        "style": "area",
+        "title": "web bandwidth",
+        "datapoints": [
+            {
+                "data_formula": "8,*",
+                "name": "web traffic in",
+                "check_id": 1234,
+                "legend_formula": "auto,2,round",
+                "color": "#4a00dc",
+                "derive": "counter",
+                "metric_type": "numeric",
+                "metric_name": "Core::Pf::Labels`web`bytes_out",
+                "hidden": false,
+                "stack": 1,
+                "axis": "l"
+            },
+            {
+                "data_formula": "-8,*",
+                "name": "web traffic in",
+                "check_id": 1234,
+                "legend_formula": "-1,*,auto,2,round",
+                "color": "#33aa33",
+                "derive": "counter",
+                "metric_type": "numeric",
+                "metric_name": "Core::Pf::Labels`web`bytes_in",
+                "hidden": false,
+                "axis": "l"
+            }
+        ]
+    }
+
+Next you need to turn it into a template. The only thing that changes between
+graphs is the label used, in this case 'web'. This is used in the metric name,
+graph title, and datapoint names. Any name can be used for the placeholder. In
+this example, `{label}` is used:
+
+    {
+        "style": "area",
+        "title": "{label} bandwidth",
+        "datapoints": [
+            {
+                "data_formula": "8,*",
+                "name": "{label} traffic in",
+                "check_id": 1234,
+                "legend_formula": "auto,2,round",
+                "color": "#4a00dc",
+                "derive": "counter",
+                "metric_type": "numeric",
+                "metric_name": "Core::Pf::Labels`{label}`bytes_out",
+                "hidden": false,
+                "stack": 1,
+                "axis": "l"
+            },
+            {
+                "data_formula": "-8,*",
+                "name": "{label} traffic in",
+                "check_id": 1234,
+                "legend_formula": "-1,*,auto,2,round",
+                "color": "#33aa33",
+                "derive": "counter",
+                "metric_type": "numeric",
+                "metric_name": "Core::Pf::Labels`{label}`bytes_in",
+                "hidden": false,
+                "axis": "l"
+            }
+        ]
+    }
+
+To add graphs with different labels, run add_graph with this template:
+
+    circus add_graph example.json label=mail
+    circus add_graph example.json label=foo
+    circus add_graph example.json label=bar
+
+If you want to automate this for many graphs, use a for loop in bash:
+
+    for i in mail foo bar; do
+        circus add_graph example.json label=$i
+    done
+
+Note that because we didn't change the check id between graphs, that this
+was just hardcoded in the template. If you wanted, you could create a
+placeholder for the check_id and require that it be specified on the command
+line. If this was done, the add_graph command would look like:
+
+    circus add_graph example.json label=mail check_id=1234
 
 <!-- vim: ft=markdown
 -->
