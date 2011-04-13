@@ -3,10 +3,10 @@
 Circus provides two methods for adding graphs, both of which use a json file
 as a graph template, but they have slightly different behaviors.
 
-The first method, add_graph_bulk, is designed for graphs that contain metrics
+The first method, `add_graph_bulk`, is designed for graphs that contain metrics
 from a single check and which you want to add many graphs for multiple checks.
 
-The second method, add_graph, is designed for more complex situations where
+The second method, `add_graph`, is designed for more complex situations where
 you either want to do a one-off adding of a graph, or where the graph spans
 multiple checks.
 
@@ -50,7 +50,7 @@ will need to add placeholders. Save this output to a text file (e.g.
 Placeholders are of the form `{placeholder_name}` (for example `{check_id}` or
 `{group1}`).
 
-## add_graph_bulk
+## add\_graph_bulk
 
 When making a template suitable for use with `add_graph_bulk`, you should
 always replace any check id field in the template with the `{check_id}`
