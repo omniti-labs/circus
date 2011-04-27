@@ -2,6 +2,7 @@ __cmdname__ = "delete_rules"
 
 import json
 import os
+import re
 import sys
 
 import circonusapi
@@ -14,16 +15,32 @@ class Module(object):
         self.api = api
         self.account = account
 
-    def command(self, opts, pattern):
+    def command(self, opts, check_pattern, metric_pattern=None):
         """Removes rules for checks that match the given pattern
 
         Arguments:
-            pattern         -- regex to match check names on
+            check_pattern   -- regex to match check names on (optional)
+            metric_pattern  -- regex to match metric names on (optional)
+
+        At least one of check_pattern or metric_pattern must be provided. If
+        you want to leave out the check_pattern, then specify it as an empty
+        string.
         """
-        checks, groups = util.find_checks(self.api, pattern)
-        check_ids = dict([(c['check_id'], c['name']) for c in checks])
         rules = self.api.list_rules()
-        matching = [r for r in rules if r['check_id'] in check_ids]
+
+        if check_pattern and check_pattern != '.':
+            checks, groups = util.find_checks(self.api, check_pattern)
+            check_ids = dict([(c['check_id'], c['name']) for c in checks])
+            matching = [r for r in rules if r['check_id'] in check_ids]
+        else:
+            checks = self.api.list_checks()
+            check_ids = dict([(c['check_id'], c['name']) for c in checks])
+            matching = rules
+
+        if metric_pattern:
+            matching = [r for r in matching if
+                    re.search(metric_pattern, r['metric_name'])]
+
         matching = sorted(matching, reverse=True,
                 key=lambda x: (x['check_id'], x['metric_name'], x['order']))
         log.msg("About to delete the following rules:")
