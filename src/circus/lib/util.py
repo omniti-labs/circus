@@ -87,9 +87,19 @@ class Template(object):
             new_l.append(self._process(i, params))
         return new_l
 
-    def _process_str(self, s, params):
-        return re.sub("{(\S+)}", lambda m: params[m.group(1)], s)
+    def _apply_filter(self, filter_name, s):
+        return getattr(self, "%s_filter" % filter_name, str)(s)
 
+    def _process_str(self, s, params):
+        return re.sub("{(?:([a-zA-Z_]+):)?([^ }]+)}",
+                lambda m: self._apply_filter(m.group(1),
+                    params[m.group(2)]), s)
+
+    def ascii_to_octet_filter(self, s):
+        return '.'.join(str(ord(i)) for i in s)
+
+    def len_filter(self, s):
+        return str(len(s))
 
 class GraphTemplate(Template):
     def __init__(self, name):
