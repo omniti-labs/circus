@@ -1,4 +1,8 @@
 {
+    "vars" : {
+        "oid_prefix": ".1.3.6.1.4.1.5951.4.1.3.1.1",
+        "oid_suffix": "{len:vserver}.{ascii_to_octet:vserver}"
+    },
     "module": "snmp",
     "display_name_{targetip}": "{vserver} vserver stats",
     "community": "{community}",
@@ -10,16 +14,10 @@
         "vserver_server_connections",
         "vserver_requests"
     ],
-    "oid_vserver_name":
-        ".1.3.6.1.4.1.5951.4.1.3.1.1.1.{len:vserver}.{ascii_to_octet:vserver}",
-    "oid_vserver_ip_address":
-        ".1.3.6.1.4.1.5951.4.1.3.1.1.2.{len:vserver}.{ascii_to_octet:vserver}",
-    "oid_vserver_port":
-        ".1.3.6.1.4.1.5951.4.1.3.1.1.3.{len:vserver}.{ascii_to_octet:vserver}",
-    "oid_vserver_client_connections":
-        ".1.3.6.1.4.1.5951.4.1.3.1.1.7.{len:vserver}.{ascii_to_octet:vserver}",
-    "oid_vserver_server_connections":
-        ".1.3.6.1.4.1.5951.4.1.3.1.1.8.{len:vserver}.{ascii_to_octet:vserver}",
-    "oid_vserver_requests":
-        ".1.3.6.1.4.1.5951.4.1.3.1.1.30.{len:vserver}.{ascii_to_octet:vserver}"
+    "oid_vserver_name":                 "{oid_prefix}.1.{oid_suffix}",
+    "oid_vserver_ip_address":           "{oid_prefix}.2.{oid_suffix}",
+    "oid_vserver_port":                 "{oid_prefix}.3.{oid_suffix}",
+    "oid_vserver_client_connections":   "{oid_prefix}.7.{oid_suffix}",
+    "oid_vserver_server_connections":   "{oid_prefix}.8.{oid_suffix}",
+    "oid_vserver_requests":             "{oid_prefix}.30.{oid_suffix}"
 }

@@ -45,6 +45,11 @@ class Template(object):
             # Then try the template directory
             fh = open(os.path.join(template_dir, "%s.json" % name))
         self.template = json.load(fh)
+        if 'vars' in self.template:
+            self.vars = self.template['vars']
+            del self.template['vars']
+        else:
+            self.vars = {}
         fh.close()
 
     def sub(self, params):
@@ -90,10 +95,29 @@ class Template(object):
     def _apply_filter(self, filter_name, s):
         return getattr(self, "%s_filter" % filter_name, str)(s)
 
+    def _expand_var(self, filter_name, var, params):
+        """Recursively expand variables/parameters
+
+        Parameters take precedence over template variables
+        """
+        expansion = None
+        if var in params:
+            expansion = params[var]
+        elif var in self.vars:
+            expansion = self.vars[var]
+        if not expansion:
+            raise ValueError("Unable to expand variable %s. Perhaps it "
+                    "needs to be provided on the command line. " % var)
+        # Recursively expand variables
+        expansion = self._process_str(expansion, params)
+        # Apply any filters
+        expansion = self._apply_filter(filter_name, expansion)
+        return expansion
+
+
     def _process_str(self, s, params):
         return re.sub("{(?:([a-zA-Z_]+):)?([^ }]+)}",
-                lambda m: self._apply_filter(m.group(1),
-                    params[m.group(2)]), s)
+                lambda m: self._expand_var(m.group(1), m.group(2), params), s)
 
     def ascii_to_octet_filter(self, s):
         return '.'.join(str(ord(i)) for i in s)
