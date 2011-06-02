@@ -1,4 +1,3 @@
-import ConfigParser
 import getopt
 import os
 import sys
@@ -10,6 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 import circonusapi
 import cmdparser
 import log
+import config
 
 
 class CirconusClient(object):
@@ -28,7 +28,7 @@ class CirconusClient(object):
 
         self.options = self.cmdparser.parse_options()
         self.init_logger(self.options['debug'])
-        self.config = self.load_config(self.options['conffile'])
+        self.config = config.load_config(self.options['conffile'])
         self.debug = self.config.getboolean('general', 'debug')
         self.api = circonusapi.CirconusAPI(self.get_api_token())
         self.account = self.get_current_account()
@@ -64,27 +64,6 @@ class CirconusClient(object):
         if debug:
             log.debug_enabled = True
         log.debug("Debugging mode on")
-
-    def load_config(self, configfile):
-        config = ConfigParser.SafeConfigParser()
-
-        # First load the default config
-        try:
-            config.readfp(open(os.path.join(os.path.dirname(__file__),
-                                                 "data", "defaults")))
-            log.debug("Loaded default configuration")
-        except IOError:
-            log.error("Unable to load default configuraiton. The program"
-                    " may not work correctly.")
-
-        # Now load the system/user specific config (if any)
-        if configfile:
-            loaded = config.read([configfile])
-        else:
-            loaded = config.read(['/etc/circusrc',
-                                  os.path.expanduser('~/.circusrc')])
-        log.debug("Loaded config files: %s" % ', '.join(loaded))
-        return config
 
     def get_api_token(self):
         account = self.get_current_account()

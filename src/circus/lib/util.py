@@ -5,6 +5,7 @@ import os
 import re
 import json
 import socket
+import config
 
 
 def confirm(text="OK to continue?"):
@@ -44,17 +45,30 @@ class Template(object):
                 template_subdir),
         ]
 
+        c = config.load_config()
+        if c.has_option("general", "template_dir"):
+            template_dirs.append(os.path.join(
+                c.get("general", "template_dir"), template_subdir))
+
+        fh = None
         for td in template_dirs:
             # Try each template dir in turn. Try with .json appended to the
             # filename also
+            filename = os.path.join(td, name)
             try:
-                fh = open(os.path.join(td, name))
+                log.debug("Trying to load template at: %s" % filename)
+                fh = open(filename)
             except IOError:
                 try:
-                    fh = open(os.path.join(td, "%s.json" % name))
+                    log.debug("Trying to load template at: %s.json" % filename)
+                    fh = open("%s.json" % filename)
                 except IOError:
                     continue
             break
+
+        if not fh:
+            log.error("Unable to find template file: %s" % name)
+            sys.exit(1)
 
         self.template = json.load(fh)
         if 'vars' in self.template:
