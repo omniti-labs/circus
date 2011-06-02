@@ -35,9 +35,7 @@ class Module(object):
                                (may be same as target if target was provided
                                 as an IP)
         """
-        template_dir = os.path.join(os.path.dirname(__file__),
-                                  "..", "templates", "check")
-        template = util.Template(template_name, template_dir)
+        template = util.Template(template_name, "check")
         targetip = util.resolve_target(target)
         template_params = {
             'agent': agent,

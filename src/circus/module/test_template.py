@@ -26,9 +26,7 @@ class Module(object):
         be automatically provided and will resolve to the IP address pointed
         to by the target hostname (if it is a hostname).
         """
-        template_dir = os.path.join(os.path.dirname(__file__),
-                                  "..", "templates", template_type)
-        template = util.Template(template_name, template_dir)
+        template = util.Template(template_name, template_type)
         params = template.parse_nv_params(params)
         if 'target' in params:
             params['targetip'] = util.resolve_target(params['target'])

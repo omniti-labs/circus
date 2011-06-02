@@ -37,13 +37,25 @@ def resolve_target(target):
 
 class Template(object):
     """Generic template class for json templates"""
-    def __init__(self, name, template_dir):
-        try:
-            # Try the current directory first
-            fh = open(name)
-        except IOError:
-            # Then try the template directory
-            fh = open(os.path.join(template_dir, "%s.json" % name))
+    def __init__(self, name, template_subdir):
+        template_dirs = [
+            '.',
+            os.path.join(os.path.dirname(__file__), "..", "templates",
+                template_subdir),
+        ]
+
+        for td in template_dirs:
+            # Try each template dir in turn. Try with .json appended to the
+            # filename also
+            try:
+                fh = open(os.path.join(td, name))
+            except IOError:
+                try:
+                    fh = open(os.path.join(td, "%s.json" % name))
+                except IOError:
+                    continue
+            break
+
         self.template = json.load(fh)
         if 'vars' in self.template:
             self.vars = self.template['vars']
@@ -127,9 +139,7 @@ class Template(object):
 
 class GraphTemplate(Template):
     def __init__(self, name):
-        template_dir = os.path.join(
-            os.path.dirname(__file__), "..", "templates", "graph")
-        super(GraphTemplate, self).__init__(name, template_dir)
+        super(GraphTemplate, self).__init__(name, "graph")
 
     def get_metrics(self):
         """Returns a list of metrics specified in the graph template"""
@@ -145,9 +155,7 @@ class GraphTemplate(Template):
 
 class RuleTemplate(Template):
     def __init__(self, name):
-        template_dir = os.path.join(
-            os.path.dirname(__file__), "..", "templates", "rule")
-        super(RuleTemplate, self).__init__(name, template_dir)
+        super(RuleTemplate, self).__init__(name, "rule")
 
     def get_metrics(self):
         """Returns a list of metrics specified in the graph template"""
