@@ -201,6 +201,23 @@ def find_checks(api, pattern):
             groups[c['check_id']].update(m.groupdict())
     return filtered_checks, groups
 
+def find_metrics(api, check_id, pattern):
+    """Retreives metrics for a check based on regex search
+
+    Also returns a list of metrics that didn't match. Useful when disabling
+    metrics - where you need to include all metrics except those that matched.
+    """
+    all_metrics = api.list_metrics(check_id=check_id)
+    matching_metrics = []
+    non_matching_metrics = []
+    groups = {}
+    for i in sorted(all_metrics):
+        m = re.search(pattern, i['name'])
+        if m:
+            matching_metrics.append(i)
+        else:
+            non_matching_metrics.append(i)
+    return matching_metrics, non_matching_metrics
 
 def verify_metrics(api, template, checks):
     log.msg("Verifying that checks have the correct metrics")
