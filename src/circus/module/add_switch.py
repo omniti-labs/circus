@@ -28,7 +28,8 @@ class Module(object):
         self.api = api
         self.account = account
 
-    def command(self, opts, target, agent, community, friendly_name):
+    def command(self, opts, target, agent, community, friendly_name,
+            pattern=None):
         """Adds snmp checks for a switch
 
         This command queries the switch using snmpwalk to discover what ports
@@ -43,6 +44,7 @@ class Module(object):
             community       -- SNMP community for the switch
             friendly_name   -- what to call the switch in the check name. This
                                is usually the (short) hostname of the switch.
+            pattern         -- An optional regex to limit which ports to add.
         """
         # TODO - abstract this away and prompt the user for a list of
         # available agents
@@ -56,14 +58,14 @@ class Module(object):
         self.target = util.resolve_target(target)
         self.community = community
         self.friendly_name = friendly_name
-        self.ports = self.get_ports(target, community)
+        self.ports = self.get_ports(target, community, pattern)
         log.msg("About to add checks for the following ports:")
         for port in sorted(self.ports):
             log.msg(port)
         if util.confirm():
             self.add_checks()
 
-    def get_ports(self, target, community):
+    def get_ports(self, target, community, pattern):
         output = subprocess.Popen(("/usr/bin/snmpwalk", "-On", "-v2c", "-c",
             community, target, self.port_name_prefix),
             stdout=subprocess.PIPE).communicate()[0]
@@ -72,7 +74,8 @@ class Module(object):
             m = re.match(
                 r'[.0-9]+\.(\d+) = STRING: "?(?:ethernet)?([0-9/]+)"?', line)
             if m:
-                ports[m.group(2)] = m.group(1)
+                if not pattern or re.match(pattern, m.group(2)):
+                    ports[m.group(2)] = m.group(1)
         return ports
 
     def add_checks(self):
