@@ -77,7 +77,8 @@ class CirconusAPI(object):
             'add_metric_rule': {
                 'form_method': 'POST',
                 'required': ['check_id', 'metric_name', 'order', 'severity',
-                             'value', 'criteria']},
+                             'value', 'criteria'],
+                'optional': ['wait']},
             'remove_metric_rule': {
                 'form_method': 'POST',
                 'required': ['check_id', 'metric_name', 'order']},
