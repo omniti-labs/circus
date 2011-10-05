@@ -1,0 +1,7 @@
+{
+    "display_name_{targetip}": "{target} - ping",
+    "count": "5",
+    "interval": "2000",
+    "metric_name": ["maximum", "count", "available", "minimum", "average"],
+    "module": "ping_icmp"
+}
