@@ -22,10 +22,10 @@ will show up in the help for the command), printing them out.
 Each module file has several variables that can be added to the top of the
 file to set various options:
 
-__cmdname__  - The name of the command (defaults to the name of the module)
-__cmdopts__  - Which options a command can accept. This is in the form that is
-               sent to getopts. E.g. "axv:".
-__longopts__ - A list of long options a command can take.
+ * `__cmdname__`  - The name of the command (defaults to the name of the module)
+ * `__cmdopts__`  - Which options a command can accept. This is in the form
+                    that is sent to getopts. E.g. "axv:".
+ * `__longopts__` - A list of long options a command can take.
 
 Using the API
 -------------
@@ -44,13 +44,15 @@ referred to as an object).
 
 Some notes on the api calls:
 
-    - All calls are methods on the api object as shown in the example above.
-    - All arguments must be passed as keyword arguments:
+ * All calls are methods on the api object as shown in the example above.
+ * All arguments must be passed as keyword arguments:
+
         api.list_checks('true')         # <-- this does NOT work
         api.list_checks(active='true')  # <-- Do this instead
-    - See lib/circonusapi.py for which api calls are available and what
-      parameters they can take. All of the information is stored in the
-      self.methods variable near the top of the file.
+
+ * See lib/circonusapi.py for which api calls are available and what
+   parameters they can take. All of the information is stored in the
+   self.methods variable near the top of the file.
 
 API Exceptions
 --------------
