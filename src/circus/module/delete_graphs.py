@@ -27,7 +27,7 @@ class Module(object):
                 filtered_graphs.append(g)
         log.msg("Going to DELETE the following graphs:")
         for g in filtered_graphs:
-            log.msg("   ", g['title'])
+            log.msg("   %s" % g['title'])
         if util.confirm():
             for g in filtered_graphs:
                 log.msgnb("Deleting %s..." % g['title'])
