@@ -51,5 +51,5 @@ class Module(object):
         try:
             self.api.add_check_bundle(**substituted)
             log.msg("Check added")
-        except CirconusError, e:
-            log.error("Failed to add check: ", e.error)
+        except circonusapi.CirconusAPIError, e:
+            log.error("Failed to add check: %s" % e.error)
