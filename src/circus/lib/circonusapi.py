@@ -203,7 +203,7 @@ class CirconusAPI(object):
         # Deal with the unlikely case that we get an error with a 200 return
         # code
         if type(response) == dict and not response.get('success', True):
-            raise CirconusAPIError(200, data)
+            raise CirconusAPIError(200, response)
         fh.close()
         return response
 
@@ -233,8 +233,9 @@ class CirconusAPIError(CirconusAPIException):
     def __init__(self, code, data):
         self.code = code
         self.data = data
-        self.success = data.get('success', False)
-        self.error = data.get('error', '')
+        if hasattr(data, 'get'):
+            self.success = data.get('success', False)
+            self.error = data.get('error', '')
 
     def __str__(self):
         return "HTTP %s - %s" % (self.code, self.error)
