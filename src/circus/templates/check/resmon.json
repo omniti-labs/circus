@@ -1,0 +1,14 @@
+{
+    "display_name_{targetip}": "{target} - resmon",
+    "url": "/",
+    "port": 81,
+    "metric_name": ["services"],
+    "metric_regex": [
+        "Core::Cpu`local`(idle|system|user)",
+        "Core::DiskFree`.*`(used_KB|used_percent)",
+        "Core::Memstat`local`(Buffers|Cached|(Mem|Swap)(Free|Total))",
+        "Core::Load`local`(5|10|15)m",
+        "Core::Resmon`resmon`hostname"
+    ],
+    "module": "resmon"
+}
