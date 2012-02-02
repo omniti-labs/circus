@@ -2,6 +2,7 @@ __cmdname__ = "add_check"
 
 import json
 import os
+import re
 import sys
 
 import circonusapi
@@ -47,6 +48,31 @@ class Module(object):
         # Add required parameters
         substituted['agent_id'] = util.get_agent(self.api, agent)
         substituted['target'] = targetip
+
+        # Allow matching metrics by regex, find available metrics, and test
+        # them against each regex in the metrics_regex key in the template to
+        # see if they match.
+        if 'metric_regex' in substituted:
+            log.msg("Fetching available metrics for regex match")
+            try:
+                substituted['test_mode'] = 1
+                rv = self.api.add_check_bundle(**substituted)
+                del substituted['test_mode']
+            except circonusapi.CirconusAPIError, e:
+                log.error("Failed to fetch available metrics: %s" % e.error)
+                sys.exit(1)
+            available_metrics = rv['metrics']
+            for metric_type in available_metrics:
+                for m in available_metrics[metric_type]:
+                    for regex in substituted['metric_regex']:
+                        if re.match(regex, m):
+                            substituted['metric_name'].append(m)
+                            break
+            log.msg("Metrics to include in the check:")
+            for m in sorted(substituted['metric_name']):
+                print "    %s" % m
+            if not util.confirm():
+                sys.exit(1)
 
         try:
             self.api.add_check_bundle(**substituted)
