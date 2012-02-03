@@ -1,0 +1,30 @@
+{
+    "style": "area",
+    "title": "{group1} Swap",
+    "datapoints": [
+        {
+            "data_formula": "1024,*",
+            "name": "Total",
+            "check_id": "{check_id}",
+            "legend_formula": "auto,2,round",
+            "color": "#33aa33",
+            "derive": "gauge",
+            "metric_type": "numeric",
+            "metric_name": "Core::Memstat`local`SwapTotal",
+            "hidden": false,
+            "axis": "l"
+        },
+        {
+            "data_formula": "1024,*",
+            "name": "Free",
+            "check_id": "{check_id}",
+            "legend_formula": "auto,2,round",
+            "color": "#3377cc",
+            "derive": "gauge",
+            "metric_type": "numeric",
+            "metric_name": "Core::Memstat`local`SwapFree",
+            "hidden": false,
+            "axis": "l"
+        }
+    ]
+}

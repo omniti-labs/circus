@@ -1,0 +1,45 @@
+{
+    "style": "area",
+    "title": "{group1} Memory",
+    "datapoints": [
+        {
+            "data_formula": "1024,*",
+            "name": "Free",
+            "check_id": "{check_id}",
+            "legend_formula": "auto,2,round",
+            "color": "#33aa33",
+            "derive": "gauge",
+            "metric_type": "numeric",
+            "metric_name": "Core::Memstat`local`MemFree",
+            "hidden": false,
+            "stack": 0,
+            "axis": "l"
+        },
+        {
+            "data_formula": "1024,*",
+            "name": "Buffers",
+            "check_id": "{check_id}",
+            "legend_formula": "auto,2,round",
+            "color": "#3377cc",
+            "derive": "gauge",
+            "metric_type": "numeric",
+            "metric_name": "Core::Memstat`local`Buffers",
+            "hidden": false,
+            "stack": 0,
+            "axis": "l"
+        },
+        {
+            "data_formula": "1024,*",
+            "name": "Cached",
+            "check_id": "{check_id}",
+            "legend_formula": "auto,2,round",
+            "color": "#00acfa",
+            "derive": "gauge",
+            "metric_type": "numeric",
+            "metric_name": "Core::Memstat`local`Cached",
+            "hidden": false,
+            "stack": 0,
+            "axis": "l"
+        }
+    ]
+}
