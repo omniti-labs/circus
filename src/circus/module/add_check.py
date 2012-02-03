@@ -71,8 +71,6 @@ class Module(object):
             log.msg("Metrics to include in the check:")
             for m in sorted(substituted['metric_name']):
                 print "    %s" % m
-            if not util.confirm():
-                sys.exit(1)
 
         try:
             self.api.add_check_bundle(**substituted)
