@@ -20,6 +20,9 @@ class CirconusAPI(object):
             'list_metrics': {
                 'form_method': 'GET',
                 'required': ['check_id']},
+            'list_available_metrics': {
+                'form_method': 'GET',
+                'required': ['check_id']},
             'add_check_bundle': {
                 'form_method': 'POST',
                 'required': ['agent_id', 'target', 'metric_name'],

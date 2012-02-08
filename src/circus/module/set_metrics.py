@@ -40,17 +40,18 @@ class Module(object):
             count += 1
             print "\r%s/%s" % (count, len(bundles)),
             sys.stdout.flush()
-            metrics = self.api.list_metrics(check_id=c['check_id'])
+            rv = self.api.list_available_metrics(check_id=c['check_id'])
             to_enable[c['check_id']] = []
-            for metric in sorted(metrics):
-                for pattern in metrics_to_enable:
-                    if re.match(pattern, metric['name']):
-                        to_enable[c['check_id']].append(metric['name'])
+            for mtype in rv['metrics']:
+                for metric in rv['metrics'][mtype]:
+                    for pattern in metrics_to_enable:
+                        if re.match(pattern, metric):
+                            to_enable[c['check_id']].append(metric)
 
         log.msg("About to set enabled metrics for the following checks")
         for c in bundles.values():
             log.msg("    %s (%s)" % (c['name'],
-                ', '.join(to_enable[c['check_id']])))
+                ', '.join(sorted(to_enable[c['check_id']]))))
 
         if util.confirm():
             for c in bundles.values():
