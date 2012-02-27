@@ -50,11 +50,21 @@ class Module(object):
                     r['metric_name'],
                     filtered_checks[r['check_id']]['agent'])
         if util.confirm():
+            log.msg("Setting maintenance:")
             for r in filtered_rules:
-                self.api.add_maintenance(
-                    check_id=r['check_id'],
-                    start='now',
-                    stop=duration,
-                    metric_name=r['metric_name'],
-                    severity=r['severity'],
-                    notes=notes)
+                log.msgnb("Sev %s : %s : %s..." % (
+                        r['severity'],
+                        filtered_checks[r['check_id']]['name'],
+                        r['metric_name']))
+                try:
+                    self.api.add_maintenance(
+                        check_id=r['check_id'],
+                        start='now',
+                        stop=duration,
+                        metric_name=r['metric_name'],
+                        severity=r['severity'],
+                        notes=notes)
+                    log.msgnf("Success")
+                except circonusapi.CirconusAPIError, e:
+                    log.msgnf("Failed")
+                    log.error(e.error)
