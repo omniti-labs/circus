@@ -134,7 +134,13 @@ class CirconusAPI(object):
                 'form_method': 'POST',
                 'required': ['worksheet_id']},
             'list_worksheets': {
-                'form_method': 'GET'}}
+                'form_method': 'GET'},
+            # Undocumented/misc
+            'add_maintenance': {
+                'form_method': 'POST',
+                'required': ['check_id', 'metric_name', 'start', 'stop',
+                    'severity'],
+                'optional': ['notes']}}
 
     def __getattr__(self, name):
         if name in self.methods:
