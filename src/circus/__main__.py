@@ -1,4 +1,4 @@
-import getopt
+import ConfigParser
 import os
 import sys
 
