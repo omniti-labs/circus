@@ -39,7 +39,6 @@ class Module(object):
             if matching_metrics:
                 to_remove[c['check_id']] = matching_metrics
                 to_keep[c['bundle_id']] = non_matching_metrics
-                print non_matching_metrics
 
         print "Disabling the following metrics: "
         for c in sorted(to_remove):
