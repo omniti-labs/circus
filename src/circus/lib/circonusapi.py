@@ -44,6 +44,12 @@ class CirconusAPI(object):
             'disable_check': {
                 'form_method': 'POST',
                 'required': ['check_id']},
+            'get_check': {
+                'form_method': 'POST',
+                'required': ['check_id']},
+            'remove_check_bundle': {
+                'form_method': 'POST',
+                'required': ['bundle_id']},
             ### Account management
             'list_accounts': {
                 'form_method': 'POST'},
@@ -72,20 +78,28 @@ class CirconusAPI(object):
                 'required': ['contact_group_id'],
                 'optional': ['user_id', 'id', 'contact_method']},
             ### Rule management
-            'list_alerts': {
-                'form_method': 'GET',
-                'required': ['start', 'end']},
+            #'list_alerts': {
+            #    'form_method': 'GET',
+            #    'required': ['start', 'end']},
             'list_rules': {
                 'form_method': 'GET',
                 'optional': ['check_id', 'metric_name']},
-            'add_metric_rule': {
+            'get_ruleset': {
+                'api_method': 'ruleset',
+                'form_method': 'GET',
+                'optional': ['check_id', 'metric_name']},
+            'set_ruleset': {
+                'api_method': 'ruleset',
                 'form_method': 'POST',
-                'required': ['check_id', 'metric_name', 'order', 'severity',
-                             'value', 'criteria'],
-                'optional': ['wait']},
-            'remove_metric_rule': {
-                'form_method': 'POST',
-                'required': ['check_id', 'metric_name', 'order']},
+                'required': ['ruleset']},
+            #'add_metric_rule': {
+            #    'form_method': 'POST',
+            #    'required': ['check_id', 'metric_name', 'order', 'severity',
+            #                 'value', 'criteria'],
+            #    'optional': ['wait']},
+            #'remove_metric_rule': {
+            #    'form_method': 'POST',
+            #    'required': ['check_id', 'metric_name', 'order']},
             'add_metric_parent': {
                 'form_method': 'POST',
                 'required': ['check_id', 'parent_check_id', 'metric_name',
@@ -101,6 +115,25 @@ class CirconusAPI(object):
                 'form_method': 'POST',
                 'required': ['contact_group_id', 'check_id', 'metric_name',
                              'severity']},
+            'set_metric_notes': {
+                'form_method': 'POST',
+                'required': ['check_id', 'metric_name'],
+                'optional': ['notes', 'link']},
+            'list_maintenance': {
+                'form_method': 'GET',
+                'required': ['start', 'stop'],
+                'optional': ['check_id']},
+            'add_maintenance': {
+                'form_method': 'POST',
+                'required': ['check_id', 'metric_name', 'start', 'stop',
+                    'severity'],
+                'optional': ['notes', 'metric_type']},
+            'edit_maintenance': {
+                'form_method': 'POST',
+                'required': ['maintenance_id', 'start', 'stop']},
+            'cancel_maintenance': {
+                'form_method': 'POST',
+                'required': ['maintenance_id']},
             ### Graph management
             'get_graph': {
                 'api_method': 'graph',
@@ -136,12 +169,36 @@ class CirconusAPI(object):
                 'required': ['worksheet_id']},
             'list_worksheets': {
                 'form_method': 'GET'},
-            # Undocumented/misc
-            'add_maintenance': {
+            ### Annotations
+            'list_annotations': {
+                'form_method': 'GET',
+                'optional': ['category', 'start', 'stop']},
+            'get_annotation': {
+                'api_method': 'annotation',
+                'form_method': 'GET',
+                'required': ['id']},
+            'set_annotation': {
+                'api_method': 'annotation',
                 'form_method': 'POST',
-                'required': ['check_id', 'metric_name', 'start', 'stop',
-                    'severity'],
-                'optional': ['notes']}}
+                'required': ['annotations']},
+            'remove_annotation': {
+                'form_method': 'POST',
+                'required': ['id', 'category'],
+                'optional': ['remove_annotations']},
+            ### Templates
+            'list_templates': {
+                'form_method': 'GET'},
+            'get_template': {
+                'api_method': 'template',
+                'form_method': 'GET',
+                'required': ['template_id']},
+            'set_template': {
+                'api_method': 'template',
+                'form_method': 'POST',
+                'required': ['template_data']},
+            'remove_template': {
+                'form_method': 'POST',
+                'required': ['template_id']}}
 
     def __getattr__(self, name):
         if name in self.methods:
