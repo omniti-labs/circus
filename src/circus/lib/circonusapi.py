@@ -1,6 +1,7 @@
 import json
 import urllib
 import urllib2
+import time
 
 
 class CirconusAPI(object):
@@ -196,18 +197,32 @@ class CirconusAPI(object):
             headers={
                 "X-Circonus-Auth-Token": self.token,
                 "X-Circonus-App-Name": "Circus"})
-        try:
-            fh = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
-            if e.code == 401:
-                raise TokenNotValidated
-            if e.code == 403:
-                raise AccessDenied
+        for i in range(5):
+            # Retry 5 times until we succeed
             try:
-                data = json.load(e)
-            except ValueError:
-                data = {}
-            raise CirconusAPIError(e.code, data)
+                fh = urllib2.urlopen(req)
+            except urllib2.HTTPError, e:
+                if e.code == 401:
+                    raise TokenNotValidated
+                if e.code == 403:
+                    raise AccessDenied
+                if e.code == 429:
+                    # We got a rate limit error, retry
+                    time.sleep(1)
+                    continue
+                # Deal with other API errors
+                try:
+                    data = json.load(e)
+                except ValueError:
+                    data = {}
+                raise CirconusAPIError(e.code, data)
+            # We succeeded, exit the for loop
+            break
+        else:
+            # We have been rate limited, retried several times and still got
+            # rate limited, so give up and raise an exception.
+            raise RateLimitRetryExceeded
+
         response = json.load(fh)
         # Deal with the unlikely case that we get an error with a 200 return
         # code
@@ -226,6 +241,9 @@ class TokenNotValidated(CirconusAPIException):
 
 
 class AccessDenied(CirconusAPIException):
+    pass
+
+class RateLimitRetryExceeded(CirconusAPIException):
     pass
 
 
