@@ -1,20 +1,34 @@
 [
     {
-        "severity": 1,
         "check_id": "{check_id}",
-        "value": "0.5",
-        "criteria": "Max Value",
-        "order": 1,
         "metric_name": "tt_connect",
-        "contact_groups": ["On Call"]
+        "metric_type": "numeric",
+        "contact_groups": {
+            "1": ["On Call"]
+        },
+        "rules": [
+            {
+                "criteria": "max value",
+                "value": "0.5",
+                "severity": 1,
+                "wait": 0
+            }
+        ]
     },
     {
-        "severity": 1,
         "check_id": "{check_id}",
-        "value": "0.5",
-        "criteria": "Max Value",
-        "order": 1,
         "metric_name": "duration",
-        "contact_groups": ["On Call"]
+        "metric_type": "numeric",
+        "contact_groups": {
+            "1": ["On Call"]
+        },
+        "rules": [
+            {
+                "criteria": "max value",
+                "value": "0.5",
+                "severity": 1,
+                "wait": 0
+            }
+        ]
     }
 ]

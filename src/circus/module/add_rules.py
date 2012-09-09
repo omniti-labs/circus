@@ -1,7 +1,6 @@
 __cmdname__ = "add_rules"
 
 import json
-import os
 import sys
 
 import circonusapi
@@ -56,27 +55,26 @@ class Module(object):
             p.update(groups[c['check_id']])
             substituted = template.sub(p)
 
+            # Get mapping from contact group name to ID
+            rv = self.api.list_contact_groups()
+            contact_group_ids = {}
+            for i in rv:
+                contact_group_ids[i['name']] = i['contact_group_id']
             for rule in substituted:
                 # Extract the contact groups and get the IDs
-                contact_group_names = rule['contact_groups']
-                del rule['contact_groups']
-                rv = self.api.list_contact_groups()
-                contact_group_ids = {}
-                for i in rv:
-                    contact_group_ids[i['name']] = i['contact_group_id']
-                contact_groups = [contact_group_ids[cg] for cg in
-                                contact_group_names]
+                for severity in rule['contact_groups']:
+                    contact_group_names = rule['contact_groups'][severity]
+                    del rule['contact_groups'][severity]
+                    rule['contact_groups'][severity] = []
+                    for cg in contact_group_names:
+                        rule['contact_groups'][severity].append({
+                            'id': contact_group_ids[cg],
+                            'name': cg
+                        })
 
                 log.msgnb("Adding rule for %s... " % c['name'])
                 try:
-                    rv = self.api.add_metric_rule(**rule)
-                    for cg in contact_groups:
-                        cg_param = {
-                            'contact_group_id': cg,
-                            'check_id': rule['check_id'],
-                            'metric_name': rule['metric_name'],
-                            'severity': rule['severity']}
-                        rv = self.api.add_rule_contact_group(**cg_param)
+                    rv = self.api.set_ruleset(ruleset=json.dumps(rule))
                     log.msgnf("Success")
                 except circonusapi.CirconusAPIError, e:
                     log.msgnf("Failed")
